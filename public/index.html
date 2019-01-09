@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>vue-music-player</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="author" content="rainbowvs"/>
+    <style>
+      /* Reset */
+      body {
+        margin: 0;
+        user-select: none;
+        line-height: 1;
+      }
+      ul, ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      input {
+        border: none;
+      }
+      button {
+        padding: 0;
+        border: none;
+        background: none;
+      }
+      input:focus, button:focus {
+        outline: none;
+      }
+      /* Custom CSS */
+      html, input, button, textarea {
+        font-family: 'PingFangSC-Regular', 'Microsoft YaHei';
+      }
+      a, button {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+    <script>
+      ;(function flexible(window, document) {
+        var docEl = document.documentElement;
+
+        // adjust body font size
+        function setBodyFontSize() {
+          if (document.body) {
+            document.body.style.fontSize = 16 + 'px';
+          } else {
+            document.addEventListener('DOMContentLoaded', setBodyFontSize);
+          }
+        }
+        setBodyFontSize();
+
+        // set 1rem = 100px
+        function setRemUnit() {
+          var maxWidth = docEl.clientWidth > 768 ? 768 : docEl.clientWidth;
+          var rem = maxWidth * 100 / 750;
+          docEl.style.fontSize = rem + 'px';
+        }
+
+        setRemUnit();
+
+        // reset rem unit on page resize
+        window.addEventListener('resize', setRemUnit);
+        window.addEventListener('pageshow', function(e) {
+          if (e.persisted) {
+            setRemUnit();
+          }
+        });
+      }(window, document));
+    </script>
+    <link rel="shortcut icon" href="http://rainbowvs.com/favicon.ico"/>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

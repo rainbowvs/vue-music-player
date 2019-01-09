@@ -1,0 +1,44 @@
+/* 背景图片 */
+@mixin bg-image($url, $extension: 'png') {
+  background-image: url($url + '@2x.' + $extension);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  @media (-webkit-min-device-pixel-ratio: 3) and (min-device-pixel-ratio: 3) {
+    background-image: url($url + '@3x.' + $extension);
+  }
+}
+
+/* 单行文本超出省略 */
+@mixin ellipsis() {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* 字体间距 */
+@mixin space($size){
+  text-indent: $size;
+  letter-spacing: $size;
+}
+
+/* 弹性布局 */
+@mixin flex($f-dType,$j-cType:center,$a-iType:center){
+  display: flex;
+  flex-direction: $f-dType;
+  justify-content: $j-cType;
+  align-items: $a-iType;
+}
+
+/* 扩展点击区域 */
+@mixin extend-click() {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+}
