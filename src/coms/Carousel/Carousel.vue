@@ -1,16 +1,16 @@
 <template>
-  <div class="carousel" ref="carousel">
+  <div class="carousel-wrapper" ref="carousel">
     <div class="carousel-group" ref="carouselGroup">
       <slot></slot>
     </div>
-    <div class="dots">
-      <span
+    <ul class="dots">
+      <li
         class="dot"
-        v-for="(item, index) in data"
+        v-for="(item, index) in dots"
         :class="{active: currentPageIndex === index }"
-        :key="item.id"
-      ></span>
-    </div>
+        :key="index"
+      ></li>
+    </ul>
   </div>
 </template>
 
@@ -59,39 +59,48 @@
           this.play();
         }
       }, 20);
-      window.addEventListener('resize', () => {
+      window.addEventListener('resize', this.resize);
+    },
+    activated() {
+      if (this.autoPlay) {
+        this.play();
+      }
+      window.addEventListener('resize', this.resize);
+    },
+    deactivated() {
+      clearTimeout(this.timer);
+      window.removeEventListener('resize', this.resize);
+    },
+    methods: {
+      resize() {
         if (!this.carousel) {
           return;
         }
         this.setCarouselWidth(true);
         this.carousel.refresh();
-      });
-    },
-    destroyed() {
-      clearTimeout(this.timer);
-    },
-    methods: {
+      },
       setCarouselWidth(isResize) {
+        // 设置item宽度为屏幕宽度
         this.children = this.$refs.carouselGroup.children;
-        let width = 0;
-        let carouselWidth = this.$refs.carousel.clientWidth;
+        let carouselGroupWidth = 0;
+        let itemWidth = this.$refs.carousel.clientWidth;
         for (let i = 0; i < this.children.length; i++) {
           let child = this.children[i];
           addClass(child, 'carousel-item');
-          child.style.width = carouselWidth + 'px';
-          width += carouselWidth;
+          child.style.width = itemWidth + 'px';
+          carouselGroupWidth += itemWidth;
         }
         if (this.loop && !isResize) {
-          width += 2 * carouselWidth;
+          carouselGroupWidth += 2 * itemWidth;
         }
-        this.$refs.carouselGroup.style.width = width + 'px';
+        this.$refs.carouselGroup.style.width = carouselGroupWidth + 'px';
       },
       initCarousel() {
         this.carousel = new BScroll(this.$refs.carousel, {
           scrollX: true,
           scrollY: false,
           momentum: false, // 惯性滚动
-          stopPropagation: true,
+          stopPropagation: false,
           click: true,
           snap: {
             loop: this.loop,
@@ -99,7 +108,12 @@
             speed: this.speed // 切换的动画时间
           }
         });
-
+        this.carousel.on('beforeScrollStart', () => {
+          // 滚动开始之前
+          if (this.autoPlay) {
+            clearTimeout(this.timer);
+          }
+        });
         this.carousel.on('scrollEnd', () => {
           // 滚动结束
           let pageIndex = this.carousel.getCurrentPage().pageX;
@@ -108,18 +122,10 @@
             this.play();
           }
         });
-
         this.carousel.on('touchEnd', () => {
           // 鼠标/手指离开
           if (this.autoPlay) {
             this.play();
-          }
-        });
-
-        this.carousel.on('beforeScrollStart', () => {
-          // 滚动开始之前
-          if (this.autoPlay) {
-            clearTimeout(this.timer);
           }
         });
       },
@@ -137,7 +143,8 @@
 </script>
 
 <style lang="scss" scoped>
-  .carousel {
+  .carousel-wrapper {
+    min-height: 1px;
     .carousel-group {
       position: relative;
       overflow: hidden;

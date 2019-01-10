@@ -22,6 +22,7 @@
 <style lang="scss" scoped>
   .tab {
     @include flex(row);
+    width: 100%;
     height: .88rem;
     font-size: $font-size-medium;
     .tab-item {

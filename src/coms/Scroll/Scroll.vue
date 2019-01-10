@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper">
+  <div class="scroll-wrapper" ref="wrapper">
     <slot></slot>
   </div>
 </template>
@@ -60,5 +60,12 @@
 </script>
 
 <style lang="scss" scoped>
-
+  .scroll-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+  }
 </style>
