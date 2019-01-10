@@ -2,7 +2,9 @@
   <div id="app">
     <m-header />
     <tab></tab>
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
   </div>
 </template>
 
@@ -18,5 +20,8 @@
 </script>
 
 <style lang="scss" scoped>
-
+  #app {
+    @include flex(column, flex-start);
+    height: 100%;
+  }
 </style>
