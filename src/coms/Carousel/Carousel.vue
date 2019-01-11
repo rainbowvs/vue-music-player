@@ -19,10 +19,6 @@
   import BScroll from 'better-scroll';
   export default {
     props: {
-      data: {
-        type: Array,
-        default: () => []
-      },
       loop: {
         type: Boolean,
         default: true
