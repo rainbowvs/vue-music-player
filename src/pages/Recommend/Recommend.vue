@@ -111,7 +111,6 @@
         padding: 0 .4rem .5rem .4rem;
         .poster {
           flex-shrink: 0;
-          display: block;
           width: 1.2rem;
           height: 1.2rem;
           background-repeat: no-repeat;
