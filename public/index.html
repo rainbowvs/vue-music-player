@@ -42,6 +42,21 @@
       ;(function flexible(window, document) {
         var docEl = document.documentElement;
 
+
+        function setDPR() {
+          var DPR = window.devicePixelRatio;
+          var dpr = 0;
+          if (DPR >= 3) {
+            dpr = 3;
+          } else if (DPR >= 2 && DPR < 3) {
+            dpr = 2;
+          } else {
+            dpr = 1;
+          }
+          docEl.setAttribute('data-dpr', dpr);
+        }
+        setDPR();
+
         // adjust body font size
         function setBodyFontSize() {
           if (document.body) {
@@ -58,7 +73,6 @@
           var rem = maxWidth * 100 / 750;
           docEl.style.fontSize = rem + 'px';
         }
-
         setRemUnit();
 
         // reset rem unit on page resize
