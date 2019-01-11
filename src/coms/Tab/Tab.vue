@@ -24,7 +24,7 @@
     @include flex(row);
     width: 100%;
     height: .88rem;
-    font-size: $font-size-medium;
+    font-size: $font-size-medium-x;
     .tab-item {
       flex: 1;
       text-align: center;
@@ -35,7 +35,7 @@
         }
       }
       span {
-        padding-bottom: .1rem;
+        padding-bottom: .05rem;
         color: $color-text-l;
       }
     }

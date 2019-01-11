@@ -15,7 +15,7 @@
         </div>
         <div class="hot-list">
           <h2 class="list-title">热门歌单推荐</h2>
-          <div class="loading-container" v-if="discList.length">
+          <div class="loading-container" v-if="!discList.length">
             <loading />
           </div>
           <ul>
@@ -31,7 +31,6 @@
                 <p class="desc" v-text="item.songListDesc"></p>
               </div>
             </li>
-            <!-- <p v-for="n in 100" :key="n">{{n}}</p> -->
           </ul>
         </div>
       </div>
@@ -130,7 +129,7 @@
             color: $color-text;
           }
           .desc {
-            font-size: $font-size-medium-x;
+            font-size: $font-size-medium;
             margin: 0;
             color: $color-text-d;
           }
