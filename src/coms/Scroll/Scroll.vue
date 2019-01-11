@@ -51,9 +51,22 @@
           probeType: this.probeType,
           click: this.click
         });
+
+        if (this.listenScroll) {
+          const that = this;
+          this.scroll.on('scroll', pos => {
+            that.$emit('scroll', pos);
+          });
+        }
       },
       refresh() {
         this.scroll && this.scroll.refresh();
+      },
+      scrollTo() {
+        this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
+      },
+      scrollToElement() {
+        this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
       }
     }
   };
