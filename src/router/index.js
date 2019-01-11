@@ -9,6 +9,12 @@ const Recommend = resolve => {
   });
 };
 
+const Singer = resolve => {
+  import('../pages/Singer/Singer').then(module => {
+    resolve(module);
+  });
+};
+
 export default new Router({
   routes: [
     {
@@ -19,6 +25,11 @@ export default new Router({
       path: '/recommend',
       name: 'Recommend',
       component: Recommend
+    },
+    {
+      path: '/singer',
+      name: 'Singer',
+      component: Singer
     }
   ]
 });
