@@ -43,7 +43,7 @@
   import Carousel from 'coms/Carousel/Carousel';
   import Loading from 'coms/Loading/Loading';
   import { requestRecommend } from 'api/recommend';
-  import { REQ_OK } from 'api/config';
+  import { REQ_STATE } from 'api/config';
   export default {
     mounted() {
       this.getRecommend();
@@ -57,7 +57,7 @@
     methods: {
       getRecommend() {
         requestRecommend().then(res => {
-          if (res.code === REQ_OK) {
+          if (res.code === REQ_STATE.OK) {
             this.sliders = res.data.slider;
             this.discList = res.data.songList;
           }

@@ -10,4 +10,6 @@ export const options = {
   param: 'jsonpCallback'
 };
 
-export const REQ_OK = 0;
+export const REQ_STATE = {
+  OK: 0
+};
