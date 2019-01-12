@@ -1,5 +1,8 @@
 <template>
   <div class="list-view">
+    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+      <h2 class="fixed-title" v-text="fixedTitle"></h2>
+    </div>
     <scroll
       ref="scroll"
       :listenScroll="listenScroll"
@@ -57,6 +60,10 @@
   import Scroll from 'coms/Scroll/Scroll';
   import Loading from 'coms/Loading/Loading';
   import { getData } from 'assets/js/dom';
+  const docEl = document.documentElement;
+  const { fontSize } = docEl.style;
+  const ANCHOR_HEIGHT = parseFloat(fontSize) * 0.36; // rem精确浮点数
+  const TITLE_HEIGHT = parseFloat(fontSize) * 0.6;
   export default {
     props: {
       data: {
@@ -73,7 +80,8 @@
     data() {
       return {
         scrollY: -1, // 滚动距离，依赖scroll事件pos.y属性
-        currentIndex: 0 // 快捷菜单高亮索引
+        currentIndex: 0, // 快捷菜单高亮索引
+        diff: -1 // fixed-title距离listGroup底部的偏移量
       };
     },
     methods: {
@@ -89,7 +97,7 @@
         for (let i = 0, len = list.length; i < len; i++) {
           let item = list[i];
           height += item.offsetHeight;
-          this.listHeight.push(height); // [0, 第一个listGroup区间上限, 第二个listGroup区间上限]
+          this.listHeight.push(height); // [0, 第一个listGroup结束滚动的距离, 第二个listGroup结束滚动的距离]
         }
       },
       onShortcutTouchStart(e) {
@@ -104,7 +112,6 @@
         // 快捷菜单touchMove
         const firstTouch = e.touches[0];
         this.touch.y2 = firstTouch.pageY;
-        const ANCHOR_HEIGHT = parseFloat(document.documentElement.style.fontSize) * 0.36; // rem精确浮点数
         const delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0; // | 转换为二进制后再进行运算，浮点型运算时相当于向下取整
         const anchorIndex = this.touch.anchorIndex + delta;
         this._scrollToElement(anchorIndex);
@@ -150,23 +157,40 @@
         // 在中间部分滚动
         for (let i = 0, len = listHeight.length; i < len; i++) {
           const h1 = listHeight[i];
-          const h2 = listHeight[i + 1];
+          const h2 = listHeight[i + 1]; // 当前list-gruop 结束所需滚动的距离
           const Y = Math.abs(newY);
           if (Y >= h1 && Y < h2) {
+            // 处于当前list-gruop内
             this.currentIndex = i;
+            this.diff = h2 + newY; // 偏移量 = 当前list-gruop 结束所需滚动的距离 + 当前滚动距离（负数）
             return;
           }
         }
 
         //当滚动超出底部，Y > 最后一个元素
         this.currentIndex = listHeight.length - 2;
+      },
+      diff(newVal) {
+        const fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0; // 偏移量 < 小于fixed-title，需要平移产生置顶效果
+        if (this.fixedTop === fixedTop) {
+          // fixedTop = 0时，保持不变
+          return;
+        }
+        // 否则平移fixed-title
+        this.fixedTop = fixedTop;
+        this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`;
       }
     },
     computed: {
       shortcutList() {
-        return this.data.map(group => {
-          return group.title.substring(0, 1);
-        });
+        return this.data.map(group => group.title.substring(0, 1));
+      },
+      fixedTitle() {
+        if (this.scrollY > 0) {
+          // 超出顶部
+          return '';
+        }
+        return this.data[this.currentIndex] ? this.data[this.currentIndex].title : '';
       }
     },
     components: {
@@ -177,20 +201,24 @@
 </script>
 
 <style lang="scss" scoped>
+  @mixin list-group-title {
+    @include flex(row, flex-start);
+    margin: 0;
+    height: .6rem;
+    padding-left: .6rem;
+    font-weight: normal;
+    font-size: $font-size-medium;
+    color: $color-text-l;
+    background: $color-highlight-background;
+  }
   .list-view {
     position: relative;
     height: 100%;
+    overflow: hidden;
     .list-group {
       padding-bottom: .6rem;
       .list-group-title {
-        @include flex(row, flex-start);
-        margin: 0;
-        height: .6rem;
-        padding-left: .6rem;
-        font-weight: normal;
-        font-size: $font-size-medium;
-        color: $color-text-l;
-        background: $color-highlight-background;
+        @include list-group-title;
       }
       .list-group-item {
         @include flex(row, flex-start);
@@ -237,13 +265,10 @@
       top: 0;
       left: 0;
       width: 100%;
+      z-index: 10;
+      transform: translate3d(0, 0, 0);
       .fixed-title {
-        height: .6rem;
-        line-height: .6rem;
-        padding-left: .4rem;
-        font-size: $font-size-small;
-        color: $color-text-l;
-        background: $color-highlight-background;
+        @include list-group-title;
       }
     }
   }
