@@ -134,8 +134,8 @@
         this.scrollY = -listHeight[index];
         this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
       },
-      selectItem() {
-
+      selectItem(item) {
+        this.$emit('select', item);
       }
     },
     watch: {
@@ -240,7 +240,7 @@
     }
     .list-shortcut {
       position: absolute;
-      z-index: 30;
+      z-index: 1;
       right: 0;
       top: 50%;
       transform: translateY(-50%);
@@ -265,7 +265,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      z-index: 10;
+      z-index: 1;
       transform: translate3d(0, 0, 0);
       .fixed-title {
         @include list-group-title;
