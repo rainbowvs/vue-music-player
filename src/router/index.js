@@ -15,6 +15,12 @@ const Singer = resolve => {
   });
 };
 
+const SingerDetail = (resolve) => {
+  import('../pages/Singer/SingerDetail').then(module => {
+    resolve(module);
+  });
+};
+
 export default new Router({
   routes: [
     {
@@ -29,7 +35,14 @@ export default new Router({
     {
       path: '/singer',
       name: 'Singer',
-      component: Singer
+      component: Singer,
+      children: [
+        {
+          path: ':id',
+          name: 'SingerDetail',
+          component: SingerDetail
+        }
+      ]
     }
   ]
 });

@@ -3,6 +3,7 @@ import fastclick from 'fastclick';
 import VueLazyload from 'vue-lazyload';
 import App from './App';
 import router from './router';
+import store from './store';
 import './assets/style/index.scss';
 
 fastclick.attach(document.body);
@@ -15,6 +16,7 @@ Vue.use(VueLazyload, {
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 });
