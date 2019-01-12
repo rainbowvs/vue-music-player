@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-    <list-view :data="singers"></list-view>
+    <list-view :data="singers" @select="selectSinger"></list-view>
+    <router-view />
   </div>
 </template>
 
@@ -8,7 +9,8 @@
   import ListView from 'coms/ListView/ListView';
   import Singer from 'assets/js/singer';
   import { requestSinger } from 'api/singer';
-  import { REQ_OK } from 'api/config';
+  import { REQ_STATE } from 'api/config';
+  import { mapMutations } from 'vuex';
   export default {
     data() {
       return {
@@ -19,9 +21,15 @@
       this.getSinger();
     },
     methods: {
+      selectSinger(singer) {
+        this.$router.push({
+          path: `/singer/${singer.id}`
+        });
+        this.setSinger(singer);
+      },
       getSinger() {
         requestSinger().then(res => {
-          if (res.code === REQ_OK) {
+          if (res.code === REQ_STATE.OK) {
             this.singers = this.normalize(res.data.list);
           }
         });
@@ -69,7 +77,10 @@
         // 排序
         letter.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
         return hot.concat(letter);
-      }
+      },
+      ...mapMutations({
+        setSinger: 'SET_SINGER'
+      })
     },
     components: {
       ListView
