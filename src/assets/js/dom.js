@@ -33,3 +33,35 @@ export function getData(el, name, val) {
   }
   return el.getAttribute(name);
 }
+
+/**
+ * 检测样式并添加前缀
+ * @param {string} style 样式名
+ * @returns {boolean|string} false => 不支持该样式 string => 适配前缀+style
+ */
+export function prefix(style) {
+  const validate = (() => {
+    const eleStyle = document.createElement('div').style;
+    const transformNames = {
+      webkit: 'webkitTransform',
+      Moz: 'MozTransform',
+      O: 'OTransform',
+      ms: 'msTransform',
+      standard: 'transform'
+    };
+
+    for (let key in transformNames) {
+      if (eleStyle[transformNames[key]] !== undefined) {
+        return key;
+      }
+    }
+    return false;
+  })();
+  if (validate === false) {
+    return false;
+  }
+  if (validate === 'standard') {
+    return style;
+  }
+  return validate + style.charAt(0).toUpperCase() + style.substring(1);
+}
