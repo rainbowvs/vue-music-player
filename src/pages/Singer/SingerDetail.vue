@@ -31,6 +31,7 @@
           this.$router.push({
             name: 'Singer'
           });
+          return;
         }
         requestSingerDetail(singerId).then(res => {
           if (res.code === REQ_STATE.OK) {
