@@ -40,7 +40,7 @@
     mounted() {
       setTimeout(() => {
         this.initScroll();
-      }, 20);
+      }, this.refreshDelay);
     },
     methods: {
       initScroll() {
@@ -53,9 +53,8 @@
         });
 
         if (this.listenScroll) {
-          const that = this;
           this.scroll.on('scroll', pos => {
-            that.$emit('scroll', pos);
+            this.$emit('scroll', pos);
           });
         }
       },
@@ -68,6 +67,13 @@
       scrollToElement() {
         this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
       }
+    },
+    watch: {
+      data() {
+        setTimeout(() => {
+          this.refresh();
+        }, this.refreshDelay);
+      }
     }
   };
 </script>
@@ -76,7 +82,7 @@
   .scroll-wrapper {
     position: absolute;
     width: 100%;
-    height: 100%;
+    bottom: 0;
     top: 0;
     left: 0;
     overflow: hidden;
