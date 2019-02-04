@@ -25,7 +25,8 @@ const config = {
       'vue$': 'vue/dist/vue.esm.js',
       'assets': resolve('src/assets'),
       'api': resolve('src/api'),
-      'coms': resolve('src/coms')
+      'coms': resolve('src/coms'),
+      'store': resolve('src/store')
     }
   },
   module: {
