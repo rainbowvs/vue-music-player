@@ -60,11 +60,13 @@
   import Scroll from 'coms/Scroll/Scroll';
   import Loading from 'coms/Loading/Loading';
   import { getData } from 'assets/js/dom';
+  import { playListMixin } from 'assets/js/mixin';
   const docEl = document.documentElement;
   const { fontSize } = docEl.style;
   const ANCHOR_HEIGHT = parseFloat(fontSize) * 0.36; // rem精确浮点数
   const TITLE_HEIGHT = parseFloat(fontSize) * 0.6;
   export default {
+    mixins: [playListMixin],
     props: {
       data: {
         type: Array,
@@ -85,6 +87,12 @@
       };
     },
     methods: {
+      handlePlayList(playList) {
+        // mixin 解决miniPlayer占位bug
+        const bottom = playList.length > 0 ? parseFloat(fontSize) * 1.2 : 0;
+        this.$refs.scroll.$el.style.bottom = `${bottom}px`;
+        this.$refs.scroll.refresh();
+      },
       scroll (pos) {
         this.scrollY = pos.y;
       },

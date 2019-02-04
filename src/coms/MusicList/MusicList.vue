@@ -5,7 +5,12 @@
     </div>
     <h1 class="title" v-text="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="play-wrapper" v-show="songs.length > 0" ref="playBtn">
+      <div
+        class="play-wrapper"
+        ref="playBtn"
+        v-show="songs.length > 0"
+        @click="random"
+      >
         <div class="play">
           <i class="music-icon icon-play"></i>
           <span class="text">随机播放全部</span>
@@ -24,7 +29,7 @@
     >
       <div class="scroll-content">
         <div class="song-list-wrapper">
-          <song-list :songs="songs"></song-list>
+          <song-list :songs="songs" @select="selectItem"></song-list>
         </div>
         <div v-show="!songs.length" class="loading-container">
           <loading></loading>
@@ -35,16 +40,19 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex';
   import Scroll from 'coms/Scroll/Scroll';
   import Loading from 'coms/Loading/Loading';
   import SongList from 'coms/SongList/SongList';
   import { prefix } from 'assets/js/dom';
+  import { playListMixin } from 'assets/js/mixin';
   const docEl = document.documentElement;
   const { fontSize } = docEl.style;
   const RESERVED_HEIGHT = parseFloat(fontSize) * 0.8; // rem精确浮点数
   const transform = prefix('transform');
   const backdrop = prefix('backdrop-filter');
   export default {
+    mixins: [playListMixin],
     props: {
       bgImage: {
         type: String,
@@ -74,12 +82,33 @@
       };
     },
     methods: {
+      handlePlayList(playList) {
+        // mixin 解决miniPlayer占位bug
+        const bottom = playList.length > 0 ? parseFloat(fontSize) * 1.2 : 0;
+        this.$refs.list.$el.style.bottom = `${bottom}px`;
+        this.$refs.list.refresh();
+      },
+      random() {
+        this.randomPlay({
+          list: this.songs
+        });
+      },
+      selectItem (item, index) {
+        this.selectPlay({
+          list: this.songs,
+          index
+        });
+      },
       scroll(pos) {
         this.scrollY = pos.y;
       },
       back() {
         this.$router.back();
-      }
+      },
+      ...mapActions([
+        'selectPlay',
+        'randomPlay'
+      ])
     },
     watch: {
       scrollY(newY) {

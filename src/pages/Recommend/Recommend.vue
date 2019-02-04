@@ -44,7 +44,11 @@
   import Loading from 'coms/Loading/Loading';
   import { requestRecommend } from 'api/recommend';
   import { REQ_STATE } from 'api/config';
+  import { playListMixin } from 'assets/js/mixin';
+  const docEl = document.documentElement;
+  const { fontSize } = docEl.style;
   export default {
+    mixins: [playListMixin],
     mounted() {
       this.getRecommend();
     },
@@ -55,6 +59,12 @@
       };
     },
     methods: {
+      handlePlayList(playList) {
+        // mixin 解决miniPlayer占位bug
+        const bottom = playList.length > 0 ? parseFloat(fontSize) * 1.2 : 0;
+        this.$refs.scroll.$el.style.bottom = `${bottom}px`;
+        this.$refs.scroll.refresh();
+      },
       getRecommend() {
         requestRecommend().then(res => {
           if (res.code === REQ_STATE.OK) {
