@@ -23,6 +23,20 @@ const config = webpackMerge(baseConfig, {
   devtool: 'eval-source-map',
   devServer: {
     before(app) {
+      // 代理 /api/getDiscList，转发到 https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg
+      app.get('/api/getDiscList', (req, res) => {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg';
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data);
+        });
+      });
+
       // 代理 /api/getPurlUrl，转发到 https://u.y.qq.com/cgi-bin/musicu.fcg
       app.post('/api/getPurlUrl', bodyParser.json(), (req, res) => {
         const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';

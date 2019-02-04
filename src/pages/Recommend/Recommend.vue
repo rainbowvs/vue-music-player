@@ -23,12 +23,12 @@
               @click="selectItem(item)"
               v-for="item in discList"
               class="item"
-              :key="item.id"
+              :key="item.dissid"
             >
-              <div class="poster" v-lazy:background-image="item.picUrl"></div>
+              <div class="poster" v-lazy:background-image="item.imgurl"></div>
               <div class="text">
-                <h3 class="name" v-text="item.songListAuthor"></h3>
-                <p class="desc" v-text="item.songListDesc"></p>
+                <h3 class="name" v-text="item.creator.name"></h3>
+                <p class="desc" v-text="item.dissname"></p>
               </div>
             </li>
           </ul>
@@ -42,7 +42,7 @@
   import Scroll from 'coms/Scroll/Scroll';
   import Carousel from 'coms/Carousel/Carousel';
   import Loading from 'coms/Loading/Loading';
-  import { requestRecommend } from 'api/recommend';
+  import { requestRecommend, requestDiscList } from 'api/recommend';
   import { REQ_STATE } from 'api/config';
   import { playListMixin } from 'assets/js/mixin';
   const docEl = document.documentElement;
@@ -51,6 +51,7 @@
     mixins: [playListMixin],
     mounted() {
       this.getRecommend();
+      this.getDiscList();
     },
     data() {
       return {
@@ -69,7 +70,13 @@
         requestRecommend().then(res => {
           if (res.code === REQ_STATE.OK) {
             this.sliders = res.data.slider;
-            this.discList = res.data.songList;
+          }
+        });
+      },
+      getDiscList() {
+        requestDiscList().then(res => {
+          if (res.code === REQ_STATE.OK) {
+            this.discList = res.data.list;
           }
         });
       },
