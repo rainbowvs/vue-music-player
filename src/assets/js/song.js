@@ -1,5 +1,9 @@
+import { getSongsUrl, getLyric } from 'api/song';
+import { REQ_STATE } from 'api/config';
+import { Base64 } from 'js-base64';
+
 export default class Song {
-  constructor({id, mid, singer, name, album, duration, image, url}) {
+  constructor({id, mid, singer, name, album, duration, image, url = ''}) {
     this.id = id;
     this.mid = mid;
     this.singer = singer;
@@ -8,6 +12,23 @@ export default class Song {
     this.duration = duration;
     this.image = image;
     this.url = url;
+  }
+
+  getLyric() {
+    if (this.lyric) {
+      // 当前歌曲已有歌词
+      return Promise.resolve(this.lyric);
+    }
+    return new Promise((resolve, reject) => {
+      getLyric(this.mid).then(res => {
+        if (res.retcode === REQ_STATE.OK) {
+          this.lyric = Base64.decode(res.lyric);
+          resolve(this.lyric);
+        } else {
+          reject('no lyric');
+        }
+      });
+    });
   }
 }
 
@@ -19,22 +40,39 @@ export function createSong({songid, songmid, singer, songname, albumname, interv
     name: songname,
     album: albumname,
     duration: interval,
-    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${albummid}.jpg?max_age=2592000`,
-    url: `http://ws.stream.qqmusic.qq.com/${songid}.m4a?fromtag=46`
+    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${albummid}.jpg?max_age=2592000`
   });
 }
 
 /**
  * 提取歌手
- * @param {Array} singer 歌手
- * @returns {string} 1.歌手 2.歌手1/歌手2
+ * @param {Array} singers 歌手
+ * @returns {string} [歌手|歌手1/歌手2]
  */
-function filterSinger(singer) {
-  if (!singer) {
+function filterSinger(singers) {
+  if (!singers) {
     return '';
   }
   const ret = [];
-  singer.forEach(s => ret.push(s.name));
+  singers.forEach(s => ret.push(s.name));
   return ret.join('/');
 }
 
+/**
+ * 获取歌曲播放url
+ * @param {Array} songs 不含url歌曲
+ * @returns {Array} 包含url歌曲
+ */
+export function processSongsUrl(songs) {
+  if (!songs.length) {
+    return Promise.resolve(songs);
+  }
+  return getSongsUrl(songs).then(midUrlInfo => {
+    midUrlInfo.forEach((v, i) => {
+      songs[i].url = v.purl.indexOf('http') === -1
+        ? `http://dl.stream.qqmusic.qq.com/${v.purl}`
+        : v.purl;
+    });
+    return songs;
+  });
+}

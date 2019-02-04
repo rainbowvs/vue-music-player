@@ -15,7 +15,7 @@
   import MusicList from 'coms/MusicList/MusicList';
   import { requestSingerDetail } from 'api/singer';
   import { REQ_STATE } from 'api/config';
-  import { createSong } from 'assets/js/song';
+  import { createSong, processSongsUrl } from 'assets/js/song';
   export default {
     data() {
       return {
@@ -35,7 +35,9 @@
         }
         requestSingerDetail(singerId).then(res => {
           if (res.code === REQ_STATE.OK) {
-            this.songs = this.normalizeSongs(res.data.list);
+            processSongsUrl(this.normalizeSongs(res.data.list)).then(songs => {
+              this.songs = songs;
+            });
           }
         });
       },
