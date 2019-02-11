@@ -49,6 +49,13 @@ const mutations = {
    */
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index;
+  },
+  /**
+   * 设置当前选中的热门歌单数据
+   * @param {number} index 当前选中的热门歌单数据
+   */
+  [types.SET_DISC](state, disc) {
+    state.disc = disc;
   }
 };
 
