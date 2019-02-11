@@ -52,10 +52,17 @@ const mutations = {
   },
   /**
    * 设置当前选中的热门歌单数据
-   * @param {number} index 当前选中的热门歌单数据
+   * @param {Object} disc 当前选中的热门歌单数据
    */
   [types.SET_DISC](state, disc) {
     state.disc = disc;
+  },
+  /**
+   * 设置排行榜中选中的歌单
+   * @param {Object} rank 排行榜中选中的歌单
+   */
+  [types.SET_RANK](state, rank) {
+    state.rank = rank;
   }
 };
 
