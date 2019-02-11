@@ -35,10 +35,12 @@
         </div>
       </div>
     </scroll>
+    <router-view />
   </div>
 </template>
 
 <script>
+  import { mapMutations } from 'vuex';
   import Scroll from 'coms/Scroll/Scroll';
   import Carousel from 'coms/Carousel/Carousel';
   import Loading from 'coms/Loading/Loading';
@@ -81,10 +83,14 @@
         });
       },
       selectItem(item) {
+        this.setDisc(item);
         this.$router.push({
-          path: `/recommend/${item.id}`
+          path: `/recommend/${item.dissid}`
         });
-      }
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
     },
     components: {
       Scroll,

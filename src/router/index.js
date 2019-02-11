@@ -9,6 +9,12 @@ const Recommend = resolve => {
   });
 };
 
+const DiscDetail = resolve => {
+  import('../pages/Recommend/DiscDetail').then(module => {
+    return resolve(module);
+  });
+};
+
 const Singer = resolve => {
   import('../pages/Singer/Singer').then(module => {
     resolve(module);
@@ -30,7 +36,14 @@ export default new Router({
     {
       path: '/recommend',
       name: 'Recommend',
-      component: Recommend
+      component: Recommend,
+      children: [
+        {
+          path: ':id',
+          name: 'DiscDetail',
+          component: DiscDetail
+        }
+      ]
     },
     {
       path: '/singer',
