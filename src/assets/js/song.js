@@ -59,7 +59,7 @@ function filterSinger(singers) {
 }
 
 /**
- * 获取歌曲播放url
+ * 获取歌曲播放url，替代requestSinger接口的歌曲url无法播放
  * @param {Array} songs 不含url歌曲
  * @returns {Array} 包含url歌曲
  */
