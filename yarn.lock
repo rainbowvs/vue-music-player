@@ -3094,6 +3094,11 @@ globule@^1.0.0:
     lodash "~4.17.10"
     minimatch "~3.0.2"
 
+good-storage@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/good-storage/-/good-storage-1.1.0.tgz#69efaf686e772876ca7f734c3e47872a064ad7f7"
+  integrity sha512-AY23bboWV+05JuHxkqgFAtdPLaA4XgIuzaVkucwritwOQ0a9zlmR5DB4bBGRExpODt9uMF5bi47Id8Q2MucL1w==
+
 graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   version "4.1.15"
   resolved "http://registry.npm.taobao.org/graceful-fs/download/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"

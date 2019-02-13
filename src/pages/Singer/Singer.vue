@@ -22,10 +22,10 @@
     },
     methods: {
       selectSinger(singer) {
+        this.setSinger(singer);
         this.$router.push({
           path: `/singer/${singer.id}`
         });
-        this.setSinger(singer);
       },
       getSinger() {
         requestSinger().then(res => {

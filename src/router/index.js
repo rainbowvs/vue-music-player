@@ -39,6 +39,12 @@ const RankDetail = (resolve) => {
   });
 };
 
+const Search = resolve => {
+  import('../pages/Search/Search').then(module => {
+    resolve(module);
+  });
+};
+
 export default new Router({
   routes: [
     {
@@ -64,7 +70,7 @@ export default new Router({
       children: [
         {
           path: ':id',
-          name: 'SingerDetail',
+          name: 'singerSingerDetail',
           component: SingerDetail
         }
       ]
@@ -78,6 +84,18 @@ export default new Router({
           path: ':id',
           name: 'RankDetail',
           component: RankDetail
+        }
+      ]
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: Search,
+      children: [
+        {
+          path: ':id',
+          name: 'searchSingerDetail',
+          component: SingerDetail
         }
       ]
     }

@@ -51,3 +51,21 @@ export function shuffle(arr) {
   }
   return _arr;
 }
+
+/**
+ * 防抖
+ * @param {Function} func 回调
+ * @param {number} delay 延时
+ * @returns {Function}
+ */
+export function debounce(func, delay) {
+  let timer = null;
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      func && func.apply(this, args);
+    }, delay);
+  };
+}

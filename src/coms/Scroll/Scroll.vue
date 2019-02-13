@@ -57,6 +57,21 @@
             this.$emit('scroll', pos);
           });
         }
+
+        if (this.pullup) {
+          this.scroll.on('scrollEnd', () => {
+            if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+              this.$emit('scrollToEnd');
+            }
+          });
+        }
+
+        if (this.beforeScroll) {
+          this.scroll.on('beforeScrollStart', () => {
+            // 滑动开始事件
+            this.$emit('beforeScroll');
+          });
+        }
       },
       refresh() {
         this.scroll && this.scroll.refresh();

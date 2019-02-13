@@ -63,6 +63,13 @@ const mutations = {
    */
   [types.SET_RANK](state, rank) {
     state.rank = rank;
+  },
+  /**
+   * 设置搜索历史
+   * @param {Object} history 搜索历史
+   */
+  [types.SET_SEARCH_HISTORY](state, history) {
+    state.searchHistory = history;
   }
 };
 
