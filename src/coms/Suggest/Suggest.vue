@@ -79,7 +79,7 @@
         } else {
           this.insertSong(item);
         }
-        this.$emit('select');
+        this.$emit('select', item);
       },
       checkMore({song}) {
         if (!song.list.length || (song.curnum + (song.curpage - 1) * perpage) >= song.totalnum) {

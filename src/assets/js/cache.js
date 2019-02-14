@@ -3,6 +3,9 @@ import storage from 'good-storage';
 const SEARCH_KEY = '__search__'; // 搜索历史key
 const SEARCH_MAX_LENGTH = 15; // 搜索历史列表最大长度
 
+const PLAY_KEY = '__play__'; // 播放历史key
+const PLAY_MAX_LENGTH = 200; // 播放历史列表最大长度
+
 /**
  * 数组头部插入元素，元素超出maxLen个时删除第一个元素
  * @param {Array} arr 数组
@@ -52,7 +55,7 @@ export function saveSearch(query) {
 
 /**
  * 从localStorage读取搜索历史
- * @returns
+ * @returns {Array} 搜索历史
  */
 export function loadSearch() {
   return storage.get(SEARCH_KEY, []);
@@ -79,4 +82,26 @@ export function deleteSearch(query) {
 export function clearSearch() {
   storage.remove(SEARCH_KEY);
   return [];
+}
+
+/**
+ * 添加指定播放历史
+ * @param {Object} song 新增歌曲
+ * @returns {Array} 新播放历史
+ */
+export function savePlay(song) {
+  let songs = storage.get(PLAY_KEY, []);
+  insertArray(songs, song, v => {
+    return v.id === song.id;
+  }, PLAY_MAX_LENGTH);
+  storage.set(PLAY_KEY, songs);
+  return songs;
+}
+
+/**
+ * 从localStorage读取播放历史
+ * @returns {Array} 播放历史
+ */
+export function loadPlay() {
+  return storage.get(PLAY_KEY, []);
 }

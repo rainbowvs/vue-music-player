@@ -1,5 +1,5 @@
 <template>
-  <div class="list-view">
+  <div class="list-view" ref="listView">
     <div class="list-fixed" ref="fixed" v-show="fixedTitle">
       <h2 class="fixed-title" v-text="fixedTitle"></h2>
     </div>
@@ -90,7 +90,7 @@
       handlePlayList(playList) {
         // mixin 解决miniPlayer占位bug
         const bottom = playList.length > 0 ? parseFloat(fontSize) * 1.2 : 0;
-        this.$refs.scroll.$el.style.bottom = `${bottom}px`;
+        this.$refs.listView.parentElement.style.bottom = `${bottom}px`;
         this.$refs.scroll.refresh();
       },
       scroll (pos) {
@@ -223,6 +223,9 @@
     position: relative;
     height: 100%;
     overflow: hidden;
+    &> .scroll-wrapper {
+      height: 100%;
+    }
     .list-group {
       padding-bottom: .6rem;
       .list-group-title {

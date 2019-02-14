@@ -163,9 +163,6 @@
     width: 100%;
     height: 100%;
     background: $color-background;
-    .scroll-wrapper {
-      overflow: visible;
-    }
     .back {
       position: absolute;
       top: 0;
@@ -243,6 +240,10 @@
       background: $color-background;
     }
     .list {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      bottom: 0;
       .song-list-wrapper {
         padding: .4rem .6rem;
       }

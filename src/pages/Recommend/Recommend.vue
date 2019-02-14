@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <scroll ref="scroll">
       <div class="scroll-content">
         <div class="carousel-box">
@@ -65,7 +65,7 @@
       handlePlayList(playList) {
         // mixin 解决miniPlayer占位bug
         const bottom = playList.length > 0 ? parseFloat(fontSize) * 1.2 : 0;
-        this.$refs.scroll.$el.style.bottom = `${bottom}px`;
+        this.$refs.recommend.style.bottom = `${bottom}px`;
         this.$refs.scroll.refresh();
       },
       getRecommend() {
@@ -102,9 +102,14 @@
 
 <style lang="scss" scoped>
   .recommend {
-    position: relative;
+    position: fixed;
     width: 100%;
-    flex: 1;
+    top: 1.76rem;
+    bottom: 0;
+    &> .scroll-wrapper {
+      height: 100%;
+      overflow: hidden;
+    }
     .carousel-box {
       position: relative;
       width: 100%;

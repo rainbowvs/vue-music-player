@@ -40,7 +40,7 @@
     mounted() {
       setTimeout(() => {
         this.initScroll();
-      }, this.refreshDelay);
+      }, 20);
     },
     methods: {
       initScroll() {
@@ -94,12 +94,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .scroll-wrapper {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-  }
+
 </style>

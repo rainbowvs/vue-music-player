@@ -6,11 +6,11 @@
 </template>
 
 <script>
+  import { mapMutations } from 'vuex';
   import ListView from 'coms/ListView/ListView';
   import Singer from 'assets/js/singer';
   import { requestSinger } from 'api/singer';
   import { REQ_STATE } from 'api/config';
-  import { mapMutations } from 'vuex';
   export default {
     data() {
       return {
@@ -90,7 +90,9 @@
 
 <style lang="scss" scoped>
   .singer {
+    position: fixed;
     width: 100%;
-    flex: 1;
+    top: 1.76rem;
+    bottom: 0;
   }
 </style>
