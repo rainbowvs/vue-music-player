@@ -45,6 +45,12 @@ const Search = resolve => {
   });
 };
 
+const User = resolve => {
+  import('../pages/User/User').then(module => {
+    resolve(module);
+  });
+};
+
 export default new Router({
   routes: [
     {
@@ -98,6 +104,11 @@ export default new Router({
           component: SingerDetail
         }
       ]
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: User
     }
   ]
 });

@@ -21,8 +21,8 @@
             >
               <i :class="`current ${getCurrentIcon(item)}`"></i>
               <span class="text" v-text="item.name"></span>
-              <span class="like">
-                <i class="music-icon icon-not-favorite"></i>
+              <span class="like" @click.stop="toggleFavorite(item)">
+                <i :class="`music-icon ${favoriteIcon(item)}`"></i>
               </span>
               <span class="delete" @click.stop="deleteOne(item)">
                 <i class="music-icon icon-delete"></i>

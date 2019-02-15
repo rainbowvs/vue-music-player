@@ -1,7 +1,14 @@
 import * as types from './mutation-types';
 import { playMode } from './config';
 import { shuffle } from 'assets/js/utils';
-import { saveSearch, deleteSearch, clearSearch, savePlay } from 'assets/js/cache';
+import {
+  saveSearch,
+  deleteSearch,
+  clearSearch,
+  savePlay,
+  saveFavorite,
+  deleteFavorite
+} from 'assets/js/cache';
 
 /**
  * 获取歌曲在列表中的索引
@@ -156,6 +163,26 @@ export const clearSongList = function({commit}) {
   commit(types.SET_PLAYING_STATE, false);
 };
 
+/**
+ * 保存播放历史
+ * @param {Object} song 被插入播放历史的歌曲
+ */
 export const savePlayHistory = function({commit}, song) {
   commit(types.SET_PLAY_HISTORY, savePlay(song));
+};
+
+/**
+ * 保存收藏列表
+ * @param {Object} song 被插入收藏列表的歌曲
+ */
+export const saveFavoriteList = function({commit}, song) {
+  commit(types.SET_FAVORITE_LIST, saveFavorite(song));
+};
+
+/**
+ * 删除单个收藏歌曲
+ * @param {Object} song 指定歌曲
+ */
+export const deleteFavoriteList = function({commit}, song) {
+  commit(types.SET_FAVORITE_LIST, deleteFavorite(song));
 };

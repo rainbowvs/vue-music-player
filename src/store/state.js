@@ -1,5 +1,5 @@
 import { playMode } from './config';
-import { loadSearch, loadPlay } from 'assets/js/cache';
+import { loadSearch, loadPlay, loadFavorite } from 'assets/js/cache';
 
 const state = {
   singer: {}, // 歌手
@@ -12,7 +12,8 @@ const state = {
   disc: {}, // 当前选中的热门歌单数据
   rank: {}, // 排行榜中选中的歌单
   searchHistory: loadSearch(), // 搜索历史，默认从localStorage读取
-  playHistory: loadPlay() // 播放历史，默认从localStorage读取
+  playHistory: loadPlay(), // 播放历史，默认从localStorage读取
+  favoriteList: loadFavorite() // 收藏列表，默认从localStorage读取
 };
 
 export default state;

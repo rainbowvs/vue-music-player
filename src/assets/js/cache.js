@@ -6,6 +6,9 @@ const SEARCH_MAX_LENGTH = 15; // 搜索历史列表最大长度
 const PLAY_KEY = '__play__'; // 播放历史key
 const PLAY_MAX_LENGTH = 200; // 播放历史列表最大长度
 
+const FAVORITE_KEY = '__favorite__'; // 收藏历史key
+const FAVORITE_MAX_LENGTH = 200; // 收藏历史列表最大长度
+
 /**
  * 数组头部插入元素，元素超出maxLen个时删除第一个元素
  * @param {Array} arr 数组
@@ -32,7 +35,7 @@ function insertArray(arr, val, compare, maxLen) {
  * @param {string} val 删除元素
  * @param {Function} compare 比较函数回调
  */
-function delectFromArray(arr, val, compare) {
+function deleteFromArray(arr, val, compare) {
   const index = arr.findIndex(compare);
   if (index > -1) {
     arr.splice(index, 1);
@@ -68,7 +71,7 @@ export function loadSearch() {
  */
 export function deleteSearch(query) {
   let searches = storage.get(SEARCH_KEY, []);
-  delectFromArray(searches, query, v => {
+  deleteFromArray(searches, query, v => {
     return v === query;
   });
   storage.set(SEARCH_KEY, searches);
@@ -104,4 +107,40 @@ export function savePlay(song) {
  */
 export function loadPlay() {
   return storage.get(PLAY_KEY, []);
+}
+
+/**
+ * 添加指定歌曲到收藏列表
+ * @param {Object} song 新增歌曲
+ * @returns {Array} 收藏列表
+ */
+export function saveFavorite(song) {
+  const songs = storage.get(FAVORITE_KEY, []);
+  insertArray(songs, song, v => {
+    return v.id === song.id;
+  }, FAVORITE_MAX_LENGTH);
+  storage.set(FAVORITE_KEY, songs);
+  return songs;
+}
+
+/**
+ * 从localStorage读取收藏列表
+ * @returns {Array} 收藏列表
+ */
+export function loadFavorite() {
+  return storage.get(FAVORITE_KEY, []);
+}
+
+/**
+ * 从收藏列表中删除单条指定歌曲
+ * @param {Object} song 需删除歌曲
+ * @returns {Array} 收藏列表
+ */
+export function deleteFavorite(song) {
+  const songs = storage.get(FAVORITE_KEY, []);
+  deleteFromArray(songs, song, v => {
+    return v.id === song.id;
+  });
+  storage.set(FAVORITE_KEY, songs);
+  return songs;
 }

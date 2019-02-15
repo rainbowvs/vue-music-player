@@ -65,18 +65,25 @@ const mutations = {
     state.rank = rank;
   },
   /**
-   * 设置搜索历史
-   * @param {Object} history 搜索历史
+   * 设置搜索历史列表
+   * @param {Array} history 搜索历史列表
    */
   [types.SET_SEARCH_HISTORY](state, history) {
     state.searchHistory = history;
   },
   /**
-   * 设置播放历史
-   * @param {Object} history 播放历史
+   * 设置播放历史列表
+   * @param {Array} history 播放历史列表
    */
   [types.SET_PLAY_HISTORY](state, history) {
     state.playHistory = history;
+  },
+  /**
+   * 设置收藏列表
+   * @param {Array} list 收藏列表
+   */
+  [types.SET_FAVORITE_LIST](state, list) {
+    state.favoriteList = list;
   }
 };
 

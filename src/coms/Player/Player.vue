@@ -70,7 +70,7 @@
             <i @click="prev" :class="`music-icon icon-prev ${disabledCls}`"></i>
             <i @click="togglePlaying" :class="`play-pause music-icon ${playIcon} ${disabledCls}`"></i>
             <i @click="next" :class="`music-icon icon-next ${disabledCls}`"></i>
-            <i class="music-icon icon-not-favorite"></i>
+            <i @click="toggleFavorite(currentSong)" :class="`music-icon ${favoriteIcon(currentSong)}`"></i>
           </div>
         </div>
       </div>
