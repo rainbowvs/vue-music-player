@@ -59,6 +59,15 @@ function filterSinger(singers) {
 }
 
 /**
+ * 判断是否合法歌曲，过滤收费歌曲
+ * @param {Object} musicData 请求返回的歌曲数据
+ * @returns {boolean}
+ */
+export function isValidMusic(musicData) {
+  return musicData.songid && musicData.albummid && (!musicData.pay || musicData.pay.payalbumprice === 0);
+}
+
+/**
  * 获取歌曲播放url，替代requestSinger接口的歌曲url无法播放
  * @param {Array} songs 不含url歌曲
  * @returns {Array} 包含url歌曲

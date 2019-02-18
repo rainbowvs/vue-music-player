@@ -15,7 +15,7 @@
   import MusicList from 'coms/MusicList/MusicList';
   import { requestSingerDetail } from 'api/singer';
   import { REQ_STATE } from 'api/config';
-  import { createSong, processSongsUrl } from 'assets/js/song';
+  import { createSong, processSongsUrl, isValidMusic } from 'assets/js/song';
   export default {
     data() {
       return {
@@ -45,7 +45,7 @@
         const ret = [];
         list.forEach(v => {
           const { musicData } = v;
-          if (musicData.songid && musicData.albummid) {
+          if (isValidMusic(musicData)) {
             ret.push(createSong(musicData));
           }
         });

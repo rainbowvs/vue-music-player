@@ -14,7 +14,7 @@
 <script>
   import MusicList from 'coms/MusicList/MusicList';
   import { requestSongList } from 'api/recommend';
-  import { createSong, processSongsUrl } from 'assets/js/song';
+  import { createSong, processSongsUrl, isValidMusic } from 'assets/js/song';
   import { REQ_STATE } from 'api/config';
   import { mapGetters } from 'vuex';
   export default {
@@ -43,7 +43,7 @@
       normalizeSongs(list) {
         let ret = [];
         list.forEach(v => {
-          if (v.songid && v.albummid) {
+          if (isValidMusic(v)) {
             ret.push(createSong(v));
           }
         });

@@ -22,7 +22,7 @@
           class="middle"
           @touchstart.prevent="middleTouchStart"
           @touchmove.prevent="middleTouchMove"
-          @touchend="middleTouchEnd"
+          @touchend.passive="middleTouchEnd"
         >
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
@@ -38,8 +38,7 @@
             class="middle-r"
             ref="lyricList"
             :data="currentLyric && currentLyric.lines"
-            style="position: static;"
-        >
+          >
             <div class="lyric-wrapper">
               <div v-if="currentLyric">
                 <p
@@ -47,7 +46,7 @@
                   class="text"
                   :class="{'current': currentLyricLineNum === index }"
                   v-for="(line, index) in currentLyric.lines"
-                  :key="line.time"
+                  :key="line.time+line.txt"
                 >{{line.txt}}</p>
               </div>
             </div>
@@ -143,6 +142,7 @@
       },
       middleTouchStart(e) {
         this.touch.initiated = true;
+        this.touch.moved = false; // touchMove标志
         const touch = e.touches[0];
         this.touch.startX = touch.pageX;
         this.touch.startY = touch.pageY;
@@ -158,6 +158,10 @@
           // Scroll组件纵向滚动
           return;
         }
+        if (!this.touch.moved) {
+          // 触发touchMove
+          this.touch.moved = true;
+        }
         // 歌词当前平移距离
         const currentTranslateX = this.currentShow === 'cd' ? 0 : -window.innerWidth;
         const translateX = Math.min(
@@ -171,6 +175,10 @@
         this.$refs.middleL.style.opacity = 1 - this.touch.percent;
       },
       middleTouchEnd() {
+        if (!this.touch.moved) {
+          // 如果没有触发touchMove，不执行任何操作，防止跳过touchMove直接执行touchEnd，产生bug
+          return;
+        }
         let translateX = 0;
         let opacity = 0;
         const time = 300;
@@ -210,6 +218,10 @@
       },
       getLyric() {
         this.currentSong.getLyric().then(lyric => {
+          if (this.currentSong.lyric !== lyric) {
+            // 防止异步导致创建多个歌词, 导致bug
+            return;
+          }
           this.currentLyric = new LyricParser(lyric, this.handleLyric);
           this.currentLyric.play();
         }).catch(() => {
@@ -225,6 +237,9 @@
         }
         this.$refs.audio.currentTime = 0;
         this.$refs.audio.play();
+        if (!this.playing) {
+          this.setPlayingState(true);
+        }
       },
       end() {
         if (this.mode === playMode.loop) {
@@ -407,10 +422,7 @@
     },
     watch: {
       currentSong(newVal, oldVal) {
-        if (!newVal.id) {
-          return;
-        }
-        if (newVal.id === oldVal.id) {
+        if (!newVal.id || newVal.id === oldVal.id) {
           return;
         }
         if (this.currentLyric) {

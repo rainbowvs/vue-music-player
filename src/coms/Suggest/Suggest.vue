@@ -37,7 +37,7 @@
   import NoResult from 'coms/NoResult/NoResult';
   import { requestSearch } from 'api/search';
   import { REQ_STATE } from 'api/config';
-  import { processSongsUrl, createSong } from 'assets/js/song';
+  import { processSongsUrl, createSong, isValidMusic } from 'assets/js/song';
   import Singer from 'assets/js/singer';
   const TYPE_SINGER = 'singer';
   const perpage = 20;
@@ -120,7 +120,7 @@
       normalizeSongs(list) {
         let ret = [];
         list.forEach(v => {
-          if (v.songid && v.albumid) {
+          if (isValidMusic(v)) {
             ret.push(createSong(v));
           }
         });

@@ -6,6 +6,13 @@ import router from './router';
 import store from './store';
 import './assets/style/index.scss';
 
+const isDev = process.env.NODE_ENV === 'development';
+if (isDev) {
+  var VConsole = require('./assets/js/vconsole.min.js');
+  /* eslint-disable no-unused-vars */
+  var vConsole = new VConsole();
+}
+
 fastclick.attach(document.body);
 
 Vue.use(VueLazyload, {
@@ -17,6 +24,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  template: '<App/>',
-  components: { App }
+  render: h => h(App)
 });
