@@ -49,6 +49,9 @@
                   :key="line.time+line.txt"
                 >{{line.txt}}</p>
               </div>
+              <div class="pure-music" v-show="isPureMusic">
+                <p>{{pureMusicLyric}}</p>
+              </div>
             </div>
           </scroll>
         </div>
@@ -58,9 +61,13 @@
             <span class="dot" :class="{active: currentShow === 'lyric'}"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time time-l">{{format(currentTime)}}</span>
+            <span class="time time-l">{{getCurrentTime}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent" @percentChange="onProgressChange"></progress-bar>
+              <progress-bar
+                :percent="percent"
+                @percentChange="onProgressChange"
+                @percentChanging="onProgressChanging"
+              ></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
@@ -97,7 +104,7 @@
     <audio
       ref="audio"
       :src="currentSong.url"
-      @canplay="ready"
+      @playing="ready"
       @timeupdate="timeupdate"
       @ended="end"
       @error="error"
@@ -121,6 +128,7 @@
   const { fontSize } = docEl.style;
   const transform = prefix('transform');
   const transitionDuration = prefix('transitionDuration');
+  const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g;
   export default {
     mixins: [playerMixin],
     created() {
@@ -129,14 +137,25 @@
     data() {
       return {
         songReady: false,
+        dragProgress: false,
         currentTime: 0,
+        progressTime: 0,
         currentLyric: null,
         currentLyricLineNum: 0,
         currentShow: 'cd',
-        playingLyric: ''
+        playingLyric: '',
+        isPureMusic: false,
+        pureMusicLyric: ''
       };
     },
     methods: {
+      onProgressChanging(percent) {
+        this.dragProgress = true;
+        this.progressTime = this.currentSong.duration * percent;
+        if (this.currentLyric) {
+          this.currentLyric.seek(this.currentTime * 1000);
+        }
+      },
       showPlayList() {
         this.$refs.playList.show();
       },
@@ -207,9 +226,13 @@
         this.$refs.middleL.style.opacity = opacity;
       },
       handleLyric({lineNum, txt}) {
+        if (!this.$refs.lyricLine) {
+          return;
+        }
+        const midLine = 6;
         this.currentLyricLineNum = lineNum;
-        if (lineNum > 5) {
-          const lineEl = this.$refs.lyricLine[lineNum - 5];
+        if (lineNum > midLine) {
+          const lineEl = this.$refs.lyricLine[lineNum - midLine];
           this.$refs.lyricList.scrollToElement(lineEl, 1000);
         } else {
           this.$refs.lyricList.scrollTo(0, 0, 1000);
@@ -223,7 +246,17 @@
             return;
           }
           this.currentLyric = new LyricParser(lyric, this.handleLyric);
-          this.currentLyric.play();
+          this.isPureMusic = !this.currentLyric.lines.length;
+          if (this.isPureMusic) {
+            this.pureMusicLyric = this.currentLyric.lrc.replace(timeExp, '').trim();
+            this.playingLyric = this.pureMusicLyric;
+          } else {
+            this.pureMusicLyric = '';
+            if (this.playing && this.canLyricPlay) {
+              // 这个时候有可能用户已经播放了歌曲，要切到对应位置
+              this.currentLyric.seek(this.currentTime * 1000);
+            }
+          }
         }).catch(() => {
           this.currentLyric = null;
           this.playingLyric = '';
@@ -249,6 +282,7 @@
         }
       },
       onProgressChange(percent) {
+        this.dragProgress = false;
         const currentTime = this.currentSong.duration * percent;
         if (!this.playing) {
           this.togglePlaying();
@@ -274,7 +308,12 @@
       ready() {
         // 音频准备就绪，期间操作DOM会抛异常
         this.songReady = true;
+        this.canLyricPlay = true;
         this.savePlayHistory(this.currentSong);
+        // 如果歌曲的播放晚于歌词的出现，播放的时候需要同步歌词
+        if (this.currentLyric && !this.isPureMusic) {
+          this.currentLyric.seek(this.currentTime * 1000);
+        }
       },
       prev() {
         if (!this.songReady) {
@@ -398,6 +437,11 @@
       ])
     },
     computed: {
+      getCurrentTime() {
+        return this.dragProgress
+          ? this.format(this.progressTime)
+          : this.format(this.currentTime);
+      },
       percent() {
         return this.currentTime / this.currentSong.duration;
       },
@@ -422,12 +466,16 @@
     },
     watch: {
       currentSong(newVal, oldVal) {
-        if (!newVal.id || newVal.id === oldVal.id) {
+        if (!newVal.id || !newVal.url || newVal.id === oldVal.id) {
           return;
         }
+        this.canLyricPlay = false;
         if (this.currentLyric) {
           // 切换歌曲时需清理歌词计时器
           this.currentLyric.stop();
+          this.currentLyric = null;
+          this.playingLyric = '';
+          this.currentLyricLineNum = 0;
         }
         this.$nextTick(() => {
           this.$refs.audio.play();

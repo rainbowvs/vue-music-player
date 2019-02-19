@@ -50,6 +50,9 @@
           Math.max(0, this.touch.left + deltaX)
         ); // 限制区间为[0, progressWidth]，否则会超出进度条
         this.setProgressWidth(progressWidth);
+        const barWidth = this.$refs.progressBar.clientWidth;
+        const percent = this.$refs.progress.clientWidth / barWidth;
+        this.$emit('percentChanging', percent);
       },
       progressTouchEnd() {
         this.touch.initiated = false;
