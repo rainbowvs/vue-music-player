@@ -1,52 +1,68 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Recommend from '../pages/Recommend/Recommend.vue';
 
 Vue.use(Router);
 
-const Recommend = resolve => {
-  import('../pages/Recommend/Recommend.vue').then(module => {
-    return resolve(module);
-  });
-};
-
 const DiscDetail = resolve => {
-  import('../pages/Recommend/DiscDetail').then(module => {
+  import(
+    /* webpackChunkName: "DiscDetail" */
+    '../pages/Recommend/DiscDetail'
+  ).then(module => {
     return resolve(module);
   });
 };
 
 const Singer = resolve => {
-  import('../pages/Singer/Singer').then(module => {
+  import(
+    /* webpackChunkName: "Singer" */
+    '../pages/Singer/Singer'
+  ).then(module => {
     resolve(module);
   });
 };
 
 const SingerDetail = (resolve) => {
-  import('../pages/Singer/SingerDetail').then(module => {
+  import(
+    /* webpackChunkName: "SingerDetail" */
+    '../pages/Singer/SingerDetail'
+  ).then(module => {
     resolve(module);
   });
 };
 
 const Rank = resolve => {
-  import('../pages/Rank/Rank').then(module => {
+  import(
+    /* webpackChunkName: "Rank" */
+    '../pages/Rank/Rank'
+  ).then(module => {
     resolve(module);
   });
 };
 
 const RankDetail = (resolve) => {
-  import('../pages/Rank/RankDetail').then(module => {
+  import(
+    /* webpackChunkName: "RankDetail" */
+    '../pages/Rank/RankDetail'
+  ).then(module => {
     resolve(module);
   });
 };
 
 const Search = resolve => {
-  import('../pages/Search/Search').then(module => {
+  import(
+    /* webpackChunkName: "Search" */
+    '../pages/Search/Search'
+  ).then(module => {
     resolve(module);
   });
 };
 
 const User = resolve => {
-  import('../pages/User/User').then(module => {
+  import(
+    /* webpackChunkName: "User" */
+    '../pages/User/User'
+  ).then(module => {
     resolve(module);
   });
 };
