@@ -1,6 +1,6 @@
 import { commonParams, REQ_STATE } from './config';
 import { getUid } from 'assets/js/uid';
-import axios from 'axios';
+import axios from './axios';
 
 /**
  * 获取歌曲播放url
@@ -40,6 +40,11 @@ export function getSongsUrl(songs) {
   return axios.post(url, {
     comm: data,
     req_0: urlMid
+  }, {
+    headers: {
+      // payload
+      'Content-Type': 'application/json; charset=utf-8'
+    }
   }).then(res => {
     if (res.data.code === REQ_STATE.OK) {
       const urlMid = res.data.req_0;

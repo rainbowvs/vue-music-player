@@ -1,6 +1,6 @@
 import jsonp from 'assets/js/jsonp';
 import { commonParams, options } from './config';
-import axios from 'axios';
+import axios from './axios';
 
 /**
  * jsonp请求热门搜索词数据

@@ -1,5 +1,5 @@
 import jsonp from 'assets/js/jsonp';
-import axios from 'axios';
+import axios from './axios';
 import { commonParams, options } from './config';
 
 /**
