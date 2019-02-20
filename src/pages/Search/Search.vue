@@ -4,7 +4,7 @@
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
     <div ref="shortcut" class="shortcut-wrapper" v-show="!query">
-      <scroll ref="scroll" class="shortcut" :data="shortcut">
+      <scroll ref="scroll" class="shortcut" :dataList="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -146,8 +146,9 @@
         .hot-key {
           margin: 0 .4rem .4rem .4rem;
           .title {
-            margin-bottom: .4rem;
-            font-size: $font-size-medium;
+            margin: 0;
+            line-height: .8rem;
+            font-size: $font-size-medium-x;
             color: $color-text-l;
           }
           .item {
@@ -164,15 +165,15 @@
           position: relative;
           margin: 0 .4rem;
           .title {
-            display: flex;
-            align-items: center;
+            @include flex(row, space-between);
+            margin: 0;
             height: .8rem;
-            font-size: $font-size-medium;
-            color: $color-text-l;
             .text {
-              flex: 1;
+              color: $color-text-l;
+              font-size: $font-size-medium-x;
             }
             .clear {
+              @include flex(row);
               @include extend-click();
               .icon-clear {
                 font-size: $font-size-medium;

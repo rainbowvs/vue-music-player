@@ -38,9 +38,8 @@
 <style lang="scss" scoped>
   .search-list {
     .search-item {
-      display: flex;
-      align-items: center;
-      height: .8rem;
+      @include flex(row);
+      height: .7rem;
       overflow: hidden;
       &.list-enter-active, &.list-leave-active {
         transition: all 0.1s;
@@ -51,11 +50,11 @@
       .text {
         flex: 1;
         color: $color-text-l;
+        font-size: $font-size-medium-x;
       }
       .icon {
-        @include extend-click();
         .icon-delete {
-          font-size: $font-size-small;
+          font-size: $font-size-medium;
           color: $color-text-d;
         }
       }

@@ -55,7 +55,7 @@
     border-radius: 6px;
     .icon-search {
       font-size: .48rem;
-      color: $color-background;
+      color: $color-text-d;
     }
     .box {
       flex: 1;
