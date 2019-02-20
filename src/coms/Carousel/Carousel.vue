@@ -58,7 +58,7 @@
         if (this.autoPlay) {
           this.play();
         }
-      }, 20);
+      }, 30);
       window.addEventListener('resize', this.resize);
     },
     activated() {
