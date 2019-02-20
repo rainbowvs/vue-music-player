@@ -7,8 +7,8 @@ import store from './store';
 import './assets/style/index.scss';
 
 /* vconsole devtool */
-var VConsole = require('./assets/js/vconsole.min.js');
-new VConsole();
+// var VConsole = require('./assets/js/vconsole.min.js');
+// new VConsole();
 
 /* fastclick */
 fastclick.attach(document.body);
