@@ -37,6 +37,7 @@
 <style lang="scss" scoped>
   .top-tip {
     position: fixed;
+    left: 0;
     top: 0;
     width: 100%;
     z-index: 500;

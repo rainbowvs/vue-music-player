@@ -110,7 +110,6 @@ export const deleteSong = function({commit, state}, song) {
   let playList = state.playList.slice();
   let sequenceList = state.sequenceList.slice();
   let currentIndex = state.currentIndex;
-  // const curIndex = currentIndex;
   const pIndex = findIndex(playList, song);
   playList.splice(pIndex, 1);
   const sIndex = findIndex(sequenceList, song);
