@@ -2,7 +2,7 @@
   <scroll
     ref="scroll"
     class="suggest"
-    :data="result"
+    :dataList="result"
     :pullup="pullup"
     :beforeScroll="beforeScroll"
     @scrollToEnd="searchMore"
@@ -15,12 +15,8 @@
         :key="formatKey(item)"
         @click="selectItem(item)"
       >
-        <div class="icon">
-          <i :class="getIconCls(item)"></i>
-        </div>
-        <div class="name">
-          <p class="text" v-html="getDisplayName(item)"></p>
-        </div>
+        <i :class="`icon ${getIconCls(item)}`"></i>
+        <p class="text" v-html="getDisplayName(item)"></p>
       </li>
       <loading v-show="hasMore" />
     </ul>
@@ -181,21 +177,16 @@
         padding-bottom: .4rem;
       }
       .icon {
-        width: .6rem;
-        [class^="icon-"] {
-          font-size: .28rem;
-          color: $color-text-d;
-        }
+        margin-right: .2rem;
+        font-size: $font-size-medium-x;
+        color: $color-text-ll;
       }
-      .name {
-        flex: 1;
-        font-size: $font-size-medium;
+      .text {
+        font-size: $font-size-medium-x;
         color: $color-text-d;
-        overflow: hidden;
-        .text {
-          @include ellipsis();
-          margin: 0;
-        }
+        flex: 1;
+        @include ellipsis();
+        margin: 0;
       }
     }
     .no-result-wrapper {

@@ -6,9 +6,9 @@
     <ul class="dots">
       <li
         class="dot"
-        v-for="(item, index) in dots"
-        :class="{active: currentPageIndex === index }"
-        :key="index"
+        v-for="(item, index) in dataList"
+        :class="{'active': currentPageIndex === index}"
+        :key="item.id"
       ></li>
     </ul>
   </div>
@@ -19,6 +19,10 @@
   import BScroll from 'better-scroll';
   export default {
     props: {
+      dataList: {
+        type: Array,
+        default: () => []
+      },
       loop: {
         type: Boolean,
         default: true
@@ -140,7 +144,6 @@
 
 <style lang="scss" scoped>
   .carousel-wrapper {
-    min-height: 1px;
     .carousel-group {
       position: relative;
       overflow: hidden;

@@ -4,7 +4,7 @@
       <li
         class="item"
         v-for="(song, index) in songs"
-        :key="index"
+        :key="song.id"
         @click="selectItem(song, index)"
       >
         <div class="rank" v-show="rank">

@@ -12,12 +12,12 @@
         <span class="text">随机播放全部</span>
       </div>
       <div class="list-wrapper" ref="listWrapper">
-        <scroll ref="favoriteList" class="list-scroll" v-if="currentIndex === 0" :data="favoriteList">
+        <scroll ref="favoriteList" class="list-scroll" v-if="currentIndex === 0" :dataList="favoriteList">
           <div class="list-inner">
             <song-list :songs="favoriteList" @select="selectSong"></song-list>
           </div>
         </scroll>
-        <scroll ref="playList" class="list-scroll" v-if="currentIndex === 1" :data="playHistory">
+        <scroll ref="playList" class="list-scroll" v-if="currentIndex === 1" :dataList="playHistory">
           <div class="list-inner">
             <song-list :songs="playHistory" @select="selectSong"></song-list>
           </div>
@@ -26,7 +26,6 @@
       <div v-show="noResult" class="no-result-wrapper">
         <no-result :title="noResultTitle"></no-result>
       </div>
-      <top-tip></top-tip>
     </div>
   </transition>
 </template>
@@ -36,7 +35,6 @@
   import Tab from 'coms/Player/Tab';
   import Scroll from 'coms/Scroll/Scroll';
   import SongList from 'coms/SongList/SongList';
-  import TopTip from 'coms/TopTip/TopTip';
   import NoResult from 'coms/NoResult/NoResult';
   import Song from 'assets/js/song';
   import { playListMixin } from 'assets/js/mixin';
@@ -74,16 +72,9 @@
         });
         this.randomPlay({list});
       },
-      showTopTip() {
-        this.$refs.topTip.show();
-      },
-      selectSong(item, index) {
-        if (index !== 0) {
-          // 除了第一首歌
-          // 因为存储localStorage经过序列化操作后实例对象被强转一般对象，因此需要重新实例化
-          this.insertSong(new Song(item));
-          // this.showTopTip();
-        }
+      selectSong(item) {
+        // 因为存储localStorage经过序列化操作后实例对象被强转一般对象，因此需要重新实例化
+        this.insertSong(new Song(item));
       },
       changeTab(index) {
         this.currentIndex = index;
@@ -118,7 +109,6 @@
       Tab,
       Scroll,
       SongList,
-      TopTip,
       NoResult
     }
   };
@@ -172,7 +162,7 @@
       .text {
         display: inline-block;
         vertical-align: middle;
-        font-size: $font-size-small;
+        font-size: $font-size-small-x;
       }
     }
     .list-wrapper {

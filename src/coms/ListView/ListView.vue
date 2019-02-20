@@ -10,25 +10,25 @@
       @scroll="scroll"
     >
       <div class="scroll-content">
-        <div class="loading-container" v-if="!data.length">
+        <div class="loading-container" v-if="!dataList.length">
           <loading />
         </div>
         <ul>
           <li
             class="list-group"
             ref="listGroup"
-            v-for="(group, i) in data"
-            :key="i"
+            v-for="group in dataList"
+            :key="group.title"
           >
             <h2 class="list-group-title">{{group.title}}</h2>
             <ul>
               <li
                 class="list-group-item"
-                v-for="(item, i) in group.items"
+                v-for="item in group.items"
                 @click="selectItem(item)"
-                :key="i"
+                :key="item.id"
               >
-                <div class="avatar" v-lazy:background-image="item.avatar"></div>
+                <img class="avatar" v-lazy="item.avatar" />
                 <span class="name">{{item.name}}</span>
               </li>
             </ul>
@@ -47,7 +47,7 @@
           v-for="(item, index) in shortcutList"
           :data-index="index"
           :class="{'current': currentIndex === index}"
-          :key="index"
+          :key="item"
         >
           {{item}}
         </li>
@@ -63,12 +63,12 @@
   import { playListMixin } from 'assets/js/mixin';
   const docEl = document.documentElement;
   const { fontSize } = docEl.style;
-  const ANCHOR_HEIGHT = parseFloat(fontSize) * 0.36; // rem精确浮点数
+  const ANCHOR_HEIGHT = parseFloat(fontSize) * 0.3; // rem精确浮点数，必须同时修改CSS
   const TITLE_HEIGHT = parseFloat(fontSize) * 0.6;
   export default {
     mixins: [playListMixin],
     props: {
-      data: {
+      dataList: {
         type: Array,
         default: () => []
       }
@@ -147,11 +147,11 @@
       }
     },
     watch: {
-      data() {
-        // 监听父组件传入的列表数据data
-        setTimeout(() => {
+      dataList() {
+        // 监听父组件传入的列表数据dataList
+        this.$nextTick(() => {
           this.calculateHeight();
-        }, 20);
+        });
       },
       scrollY(newY) {
         const listHeight = this.listHeight;
@@ -191,14 +191,14 @@
     },
     computed: {
       shortcutList() {
-        return this.data.map(group => group.title.substring(0, 1));
+        return this.dataList.map(group => group.title.substring(0, 1));
       },
       fixedTitle() {
         if (this.scrollY > 0) {
           // 超出顶部
           return '';
         }
-        return this.data[this.currentIndex] ? this.data[this.currentIndex].title : '';
+        return this.dataList[this.currentIndex] ? this.dataList[this.currentIndex].title : '';
       }
     },
     components: {
@@ -254,7 +254,7 @@
       z-index: 1;
       right: 0;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translateY(-46%);
       width: .4rem;
       padding: .4rem 0;
       border-radius: 10px;
@@ -262,8 +262,7 @@
       font-family: Helvetica;
       .item {
         @include flex(row);
-        /* min-height: .24rem; */
-        height: .36rem;
+        height: .3rem;
         color: $color-text-l;
         font-size: $font-size-small-x;
         &.current {

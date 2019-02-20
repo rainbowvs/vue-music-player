@@ -22,7 +22,7 @@
     <scroll
       class="list"
       ref="list"
-      :data="songs"
+      :dataList="songs"
       :listen-scroll="listenScroll"
       :probe-type="probeType"
       @scroll="scroll"

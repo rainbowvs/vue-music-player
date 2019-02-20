@@ -20,7 +20,7 @@
         type: Boolean,
         default: false
       },
-      data: {
+      dataList: {
         type: Array,
         default: null
       },
@@ -38,9 +38,9 @@
       }
     },
     mounted() {
-      setTimeout(() => {
+      this.$nextTick(() => {
         this.initScroll();
-      }, 20);
+      });
     },
     methods: {
       initScroll() {
@@ -84,15 +84,11 @@
       }
     },
     watch: {
-      data() {
-        setTimeout(() => {
+      dataList() {
+        this.$nextTick(() => {
           this.refresh();
-        }, this.refreshDelay);
+        });
       }
     }
   };
 </script>
-
-<style lang="scss" scoped>
-
-</style>
