@@ -1,6 +1,6 @@
 <template>
   <div class="rank" ref="rank">
-    <scroll class="toplist" ref="scroll">
+    <scroll class="toplist" ref="scroll" :dataList="topList">
       <ul>
         <div class="loading-container" v-if="!topList.length">
           <loading />
@@ -11,7 +11,7 @@
           :key="item.id"
           @click="selectItem(item)"
         >
-          <div class="poster" v-lazy:background-image="item.picUrl"></div>
+          <img class="poster" v-lazy="item.picUrl" />
           <ul class="song-list">
             <li class="song" v-for="(song, index) in item.songList" :key="song.songname">
               <span v-text="index + 1"></span>
@@ -107,7 +107,7 @@
         overflow: hidden;
         background: $color-highlight-background;
         color: $color-text-d;
-        font-size: $font-size-small-x;
+        font-size: $font-size-medium;
         .song {
           @include ellipsis();
           line-height: .52rem;

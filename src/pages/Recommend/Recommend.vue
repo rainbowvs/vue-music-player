@@ -4,7 +4,7 @@
       <div class="scroll-content">
         <div class="carousel-box">
           <div class="carousel">
-            <Carousel v-if="sliders.length">
+            <Carousel v-if="sliders.length" :dataList="sliders">
               <div v-for="item in sliders" :key="item.id">
                 <a :href="item.linkUrl">
                   <img :src="item.picUrl">
@@ -25,7 +25,7 @@
               class="item"
               :key="item.dissid"
             >
-              <div class="poster" v-lazy:background-image="item.imgurl"></div>
+              <img class="poster" v-lazy="item.imgurl" />
               <div class="text">
                 <h3 class="name" v-text="item.creator.name"></h3>
                 <p class="desc" v-text="item.dissname"></p>
@@ -121,6 +121,7 @@
         left: 0;
         top: 0;
         width: 100%;
+        height: 100%;
       }
     }
     .hot-list {
