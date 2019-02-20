@@ -63,17 +63,20 @@
         const percent = this.$refs.progress.clientWidth / barWidth;
         this.$emit('percentChange', percent);
       },
-      setProgressWidth(progressWidth) {
-        this.$refs.progress.style.width = `${progressWidth}px`;
-        this.$refs.progressBtn.style[transform] = `translate3d(${progressWidth}px, 0, 0)`;
+      setProgressWidth(progressWidth, percent) {
+        let calWidth = progressWidth;
+        if (percent) {
+          const barWidth = this.$refs.progressBar.clientWidth;
+          calWidth = percent * barWidth;
+        }
+        this.$refs.progress.style.width = `${calWidth}px`;
+        this.$refs.progressBtn.style[transform] = `translate3d(${calWidth}px, 0, 0)`;
       }
     },
     watch: {
       percent(newVal) {
         if (newVal >= 0 && !this.touch.initiated) {
-          const barWidth = this.$refs.progressBar.clientWidth;
-          const progressWidth = newVal * barWidth;
-          this.setProgressWidth(progressWidth);
+          this.setProgressWidth(null, newVal);
         }
       }
     }
