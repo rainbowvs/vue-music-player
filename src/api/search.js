@@ -1,5 +1,5 @@
 import jsonp from 'assets/js/jsonp';
-import { commonParams, options } from './config';
+import { commonParams, options, IS_DEV } from './config';
 import axios from './axios';
 
 /**
@@ -25,7 +25,7 @@ export function requestHotKey() {
  * @returns {Promise} promise
  */
 export function requestSearch(query, page, zhida, perpage) {
-  const url = '/api/search';
+  const url = IS_DEV ? '/api/search' : 'http://120.79.84.141/music/api/search';
   const data = Object.assign({}, commonParams, {
     w: query,
     p: page,

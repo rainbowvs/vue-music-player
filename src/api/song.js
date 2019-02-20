@@ -1,4 +1,4 @@
-import { commonParams, REQ_STATE } from './config';
+import { commonParams, REQ_STATE, IS_DEV } from './config';
 import { getUid } from 'assets/js/uid';
 import axios from './axios';
 
@@ -8,7 +8,7 @@ import axios from './axios';
  * @returns {Promise} 歌曲信息
  */
 export function getSongsUrl(songs) {
-  const url = '/api/getPurlUrl';
+  const url = IS_DEV ? '/api/getPurlUrl' : 'http://120.79.84.141/music/api/getPurlUrl';
   const mids = [];
   const types = [];
 
@@ -65,7 +65,7 @@ export function getSongsUrl(songs) {
  * @returns {Promise} 歌词信息
  */
 export function getLyric(mid) {
-  const url ='/api/getLyric';
+  const url = IS_DEV ? '/api/getLyric' : 'http://120.79.84.141/music/api/getLyric';
 
   const data = Object.assign({}, commonParams, {
     songmid: mid,

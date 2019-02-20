@@ -13,3 +13,5 @@ export const options = {
 export const REQ_STATE = {
   OK: 0
 };
+
+export const IS_DEV = process.env.NODE_ENV === 'development';

@@ -1,6 +1,6 @@
 import jsonp from 'assets/js/jsonp';
 import axios from './axios';
-import { commonParams, options } from './config';
+import { commonParams, options, IS_DEV } from './config';
 
 /**
  * jsonp请求推荐页的数据
@@ -21,7 +21,7 @@ export function requestRecommend() {
  * @returns {Promise} promise
  */
 export function requestDiscList() {
-  const url = '/api/getDiscList';
+  const url = IS_DEV ? '/api/getDiscList' : 'http://120.79.84.141/music/api/getDiscList';
 
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
@@ -43,7 +43,7 @@ export function requestDiscList() {
 }
 
 export function requestSongList(disstid) {
-  const url = '/api/getCdInfo';
+  const url = IS_DEV ? '/api/getCdInfo' : 'http://120.79.84.141/music/api/getCdInfo';
 
   const data = Object.assign({}, commonParams, {
     disstid,
