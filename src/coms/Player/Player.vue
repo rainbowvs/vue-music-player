@@ -27,7 +27,7 @@
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
-                <img :src="currentSong.image" class="image" />
+                <img v-lazy="currentSong.image" :key="currentSong.image" class="image" />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -37,7 +37,7 @@
           <scroll
             class="middle-r"
             ref="lyricList"
-            :data="currentLyric && currentLyric.lines"
+            :dataList="currentLyric && currentLyric.lines"
           >
             <div class="lyric-wrapper">
               <div v-if="currentLyric">
@@ -64,6 +64,7 @@
             <span class="time time-l">{{getCurrentTime}}</span>
             <div class="progress-bar-wrapper">
               <progress-bar
+                ref="progressBar"
                 :percent="percent"
                 @percentChange="onProgressChange"
                 @percentChanging="onProgressChanging"
@@ -86,7 +87,7 @@
         <div class="progress" :style="`width: ${percent*100}%`"></div>
         <div class="icon">
           <div ref="miniWrapper" :class="`imgWrapper ${cdCls}`">
-            <img :src="currentSong.image" alt="miniCDPost">
+            <img v-lazy="currentSong.image" :key="currentSong.image" alt="miniCDPost">
           </div>
         </div>
         <div class="text">
@@ -109,7 +110,7 @@
       @ended="end"
       @error="error"
     />
-    <play-list ref="playList" />
+    <play-list ref="playList" :songReady="songReady" />
   </div>
 </template>
 
@@ -152,9 +153,6 @@
       onProgressChanging(percent) {
         this.dragProgress = true;
         this.progressTime = this.currentSong.duration * percent;
-        if (this.currentLyric) {
-          this.currentLyric.seek(this.currentTime * 1000);
-        }
       },
       showPlayList() {
         this.$refs.playList.show();
@@ -224,6 +222,7 @@
         this.$refs.lyricList.$el.style[transform] = `translate3d(${translateX}px, 0, 0)`;
         this.$refs.middleL.style[transitionDuration] = `${time}ms`;
         this.$refs.middleL.style.opacity = opacity;
+        this.touch.initiated = false;
       },
       handleLyric({lineNum, txt}) {
         if (!this.$refs.lyricLine) {
@@ -253,7 +252,7 @@
           } else {
             this.pureMusicLyric = '';
             if (this.playing && this.canLyricPlay) {
-              // 这个时候有可能用户已经播放了歌曲，要切到对应位置
+              // 歌词出现晚于歌曲播放，要切到对应位置
               this.currentLyric.seek(this.currentTime * 1000);
             }
           }
@@ -264,10 +263,6 @@
         });
       },
       loop() {
-        if (this.currentLyric) {
-          // 歌词重新播放
-          this.currentLyric.seek(0);
-        }
         this.$refs.audio.currentTime = 0;
         this.$refs.audio.play();
         if (!this.playing) {
@@ -288,7 +283,7 @@
           this.togglePlaying();
         }
         if (this.currentLyric) {
-          // 歌词跟随进度改变
+          // 歌词跟随进度改变，UC中currentTime改变不会触发playing事件，因此需要手动调整
           this.currentLyric.seek(currentTime * 1000);
         }
         this.$refs.audio.currentTime = currentTime;
@@ -310,8 +305,8 @@
         this.songReady = true;
         this.canLyricPlay = true;
         this.savePlayHistory(this.currentSong);
-        // 如果歌曲的播放晚于歌词的出现，播放的时候需要同步歌词
         if (this.currentLyric && !this.isPureMusic) {
+          // 歌曲的播放晚于歌词的出现，播放的时候需要同步歌词
           this.currentLyric.seek(this.currentTime * 1000);
         }
       },
@@ -469,6 +464,8 @@
         if (!newVal.id || !newVal.url || newVal.id === oldVal.id) {
           return;
         }
+        this.currentTime = 0;
+        this.songReady = false; // currentIndex切歌必须重新设为false，防止抛异常
         this.canLyricPlay = false;
         if (this.currentLyric) {
           // 切换歌曲时需清理歌词计时器
@@ -487,6 +484,15 @@
         this.$nextTick(() => {
           newVal ? audio.play() : audio.pause();
         });
+      },
+      fullScreen(newVal) {
+        if (newVal) {
+          this.$nextTick(() => {
+            this.$refs.lyricList.refresh();
+            // （暂停时切换）全屏播放后重置进度条，防止进度条停在收起时
+            this.$refs.progressBar.setProgressWidth(null, this.percent);
+          });
+        }
       }
     },
     components: {
@@ -569,7 +575,7 @@
         position: fixed;
         width: 100%;
         top: 1.6rem;
-        bottom: 3.4rem;
+        bottom: 2.9rem;
         white-space: nowrap;
         font-size: 0;
         .middle-l {
@@ -606,7 +612,7 @@
           }
           .playing-lyric-wrapper {
             width: 80%;
-            margin: .6rem auto 0 auto;
+            margin: .4rem auto 0 auto;
             overflow: hidden;
             text-align: center;
             .playing-lyric {
@@ -648,7 +654,7 @@
       }
       .bottom {
         position: absolute;
-        bottom: 1rem;
+        bottom: .5rem;
         width: 100%;
         .dot-wrapper {
           text-align: center;
@@ -675,7 +681,7 @@
           padding: .2rem 0;
           .time {
             color: $color-text;
-            font-size: $font-size-small;
+            font-size: $font-size-small-x;
             line-height: .6rem;
           }
           .progress-bar-wrapper {
@@ -772,7 +778,7 @@
         .desc {
           @include ellipsis();
           margin: 0;
-          font-size: $font-size-small;
+          font-size: $font-size-medium;
           color: $color-text-d;
         }
       }

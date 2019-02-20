@@ -4,14 +4,12 @@
       <div class="list-wrapper">
         <div class="list-header">
           <h1 class="title">
-            <i :class="`icon music-icon ${modeIcon}`" @click="changeMode"></i>
+            <i :class="`mode music-icon ${modeIcon}`" @click="changeMode"></i>
             <span class="text" v-text="modeText" @click="changeMode"></span>
-            <span class="clear" @click="showConfirm">
-              <i class="music-icon icon-clear"></i>
-            </span>
+            <i class="clear music-icon icon-clear" @click="showConfirm"></i>
           </h1>
         </div>
-        <scroll ref="scroll" class="list-content" :data="sequenceList">
+        <scroll ref="scroll" class="list-content" :dataList="sequenceList">
           <transition-group ref="list" name="list" tag="ul">
             <li
               class="item"
@@ -19,8 +17,10 @@
               :key="item.id"
               @click="selectItem(item, index)"
             >
+              <!-- 当前正在播放的歌曲，指播放状态 -->
               <i :class="`current ${getCurrentIcon(item)}`"></i>
-              <span class="text" v-text="item.name"></span>
+              <!-- 当前正在播放的歌曲，指选中歌曲 -->
+              <span class="text" :class="{'active': currentSong.id ===item.id}" v-text="item.name"></span>
               <span class="like" @click.stop="toggleFavorite(item)">
                 <i :class="`music-icon ${favoriteIcon(item)}`"></i>
               </span>
@@ -60,6 +60,12 @@
   import { playerMixin } from 'assets/js/mixin';
   export default {
     mixins: [playerMixin],
+    props: {
+      songReady: {
+        type: Boolean,
+        default: false
+      }
+    },
     data() {
       return {
         showFlag: false
@@ -77,6 +83,10 @@
         this.$refs.confirm.show();
       },
       deleteOne(item) {
+        if (!this.songReady) {
+          // 防止快速删除导致audio DOM抛异常
+          return;
+        }
         this.deleteSong(item);
         if (!this.playList.length) {
           // 播放列表没有歌曲时隐藏
@@ -90,6 +100,10 @@
         this.$refs.scroll.scrollToElement(this.$refs.list.$el.children[index], 300);
       },
       selectItem(item, index) {
+        if (this.currentSong.id === item.id) {
+          this.setPlayingState(!this.playing);
+          return;
+        }
         let newIndex = index;
         if (this.mode === playMode.random) {
           newIndex = this.playList.findIndex(v => {
@@ -100,7 +114,7 @@
         this.setPlayingState(true); // 防止暂停时切换歌曲导致播放状态bug
       },
       getCurrentIcon(item) {
-        if (this.currentSong.id === item.id) {
+        if (this.currentSong.id === item.id && this.playing) {
           return 'music-icon icon-play';
         }
         return '';
@@ -136,7 +150,8 @@
         'sequenceList',
         'currentSong',
         'mode',
-        'playList'
+        'playList',
+        'playing'
       ])
     },
     watch: {
@@ -191,7 +206,7 @@
           margin: 0;
           font-weight: normal;
           @include flex(row);
-          .icon {
+          .mode {
             margin-right: .2rem;
             font-size: .6rem;
             color: $color-theme-d;
@@ -202,21 +217,19 @@
             color: $color-text-l;
           }
           .clear {
-            @include extend-click();
-            .icon-clear {
-              font-size: $font-size-medium;
-              color: $color-text-d;
-            }
+            font-size: $font-size-large;
+            color: $color-text-d;
           }
         }
       }
       .list-content {
-        max-height: 4.8rem;
+        max-height: 5rem;
         overflow: hidden;
         .item {
           @include flex(row);
+          position: relative;
           height: .8rem;
-          padding: 0 .6rem 0 .4rem;
+          padding: 0 .6rem 0 .85rem;
           overflow: hidden;
           &.list-enter-active, &.list-leave-active {
             transition: all 0.1s;
@@ -225,20 +238,25 @@
             height: 0;
           }
           .current {
-            flex: 0 0 .4rem;
-            width: .4rem;
-            font-size: $font-size-small;
+            position: absolute;
+            left: .4rem;
+            top: 50%;
+            transform: translate(0, -50%);
+            font-size: $font-size-medium;
             color: $color-theme-d;
           }
           .text {
             @include ellipsis();
             flex: 1;
-            font-size: $font-size-medium;
+            font-size: $font-size-medium-x;
             color: $color-text-d;
+            &.active {
+              color: $color-theme-d;
+            }
           }
           .like {
             @include extend-click();
-            margin-right: .3rem;
+            margin: 0 .3rem 0 .1rem;
             font-size: $font-size-small;
             color: $color-theme;
             .icon-favorite {
@@ -254,7 +272,7 @@
       }
       .list-operate {
         width: 2.8rem;
-        margin: .4rem auto .6rem auto;
+        margin: .2rem auto .4rem;
         .add {
           @include flex(row);
           padding: .16rem .32rem;
@@ -266,7 +284,8 @@
             font-size: $font-size-small-x;
           }
           .text {
-            font-size: $font-size-small;
+            white-space: nowrap;
+            font-size: $font-size-small-x;
           }
         }
       }
