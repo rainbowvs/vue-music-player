@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <m-header />
-    <tab></tab>
+    <Nav></Nav>
     <keep-alive>
       <router-view />
     </keep-alive>
@@ -12,11 +12,11 @@
 <script>
   import Player from 'coms/Player/Player';
   import MHeader from 'coms/MHeader/MHeader';
-  import Tab from 'coms/Tab/Tab';
+  import Nav from 'coms/Nav/Nav';
   export default {
     components: {
       MHeader,
-      Tab,
+      Nav,
       Player
     }
   };

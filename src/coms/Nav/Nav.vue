@@ -1,18 +1,18 @@
 <template>
-  <div class="tab">
-    <router-link tag="div" class="tab-item" to="/recommend">
+  <ul class="nav">
+    <router-link tag="li" class="nav-item" to="/recommend">
       <span>推荐</span>
     </router-link>
-    <router-link tag="div" class="tab-item" to="/singer">
+    <router-link tag="li" class="nav-item" to="/singer">
       <span>歌手</span>
     </router-link>
-    <router-link tag="div" class="tab-item" to="/rank">
+    <router-link tag="li" class="nav-item" to="/rank">
       <span>排行</span>
     </router-link>
-    <router-link tag="div" class="tab-item" to="/search">
+    <router-link tag="li" class="nav-item" to="/search">
       <span>搜索</span>
     </router-link>
-  </div>
+  </ul>
 </template>
 
 <script>
@@ -20,12 +20,12 @@
 </script>
 
 <style lang="scss" scoped>
-  .tab {
+  .nav {
     @include flex(row);
     width: 100%;
     height: .88rem;
     font-size: $font-size-medium-x;
-    .tab-item {
+    .nav-item {
       flex: 1;
       text-align: center;
       &.router-link-active {
