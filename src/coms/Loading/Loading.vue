@@ -29,6 +29,7 @@
     }
     p {
       margin: 0;
+      font-size: $font-size-medium-x;
       color: $color-text;
     }
   }
