@@ -8,3 +8,12 @@ body {
   background-color: $color-background;
   touch-action: manipulation; /* passive */
 }
+/* preview image */
+img {
+  &[lazy="loading"] {
+    @include bg-image('~assets/img/logo');
+  }
+  &[lazy="error"] {
+    @include bg-image('~assets/img/no-result');
+  }
+}

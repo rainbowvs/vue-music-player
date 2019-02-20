@@ -6,17 +6,22 @@ import router from './router';
 import store from './store';
 import './assets/style/index.scss';
 
+/* vconsole devtool */
 const isDev = process.env.NODE_ENV === 'development';
 if (isDev) {
   var VConsole = require('./assets/js/vconsole.min.js');
-  /* eslint-disable no-unused-vars */
-  var vConsole = new VConsole();
+  /* eslint-disable no-new */
+  new VConsole();
 }
 
+/* fastclick */
 fastclick.attach(document.body);
 
+/* vue-lazyload initial config */
+const preImg = require('./assets/img/1px.gif');
 Vue.use(VueLazyload, {
-  loading: require('./assets/img/logo@2x.png')
+  loading: preImg,
+  error: preImg
 });
 
 /* eslint-disable no-new */
