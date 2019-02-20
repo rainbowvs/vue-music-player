@@ -7,12 +7,8 @@ import store from './store';
 import './assets/style/index.scss';
 
 /* vconsole devtool */
-const isDev = process.env.NODE_ENV === 'development';
-if (isDev) {
-  var VConsole = require('./assets/js/vconsole.min.js');
-  /* eslint-disable no-new */
-  new VConsole();
-}
+var VConsole = require('./assets/js/vconsole.min.js');
+new VConsole();
 
 /* fastclick */
 fastclick.attach(document.body);
