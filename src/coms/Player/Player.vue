@@ -43,11 +43,11 @@
               <div v-if="currentLyric">
                 <p
                   ref="lyricLine"
-                  class="text"
-                  :class="{'current': currentLyricLineNum === index }"
                   v-for="(line, index) in currentLyric.lines"
+                  v-html="line.txt"
+                  :class="['text', {'current': currentLyricLineNum === index }]"
                   :key="line.time+line.txt"
-                >{{line.txt}}</p>
+                ></p>
               </div>
               <div class="pure-music" v-show="isPureMusic">
                 <p>{{pureMusicLyric}}</p>
@@ -104,7 +104,6 @@
     </transition>
     <audio
       ref="audio"
-      :src="currentSong.url"
       @playing="ready"
       @timeupdate="timeupdate"
       @ended="end"
@@ -474,6 +473,7 @@
           this.playingLyric = '';
           this.currentLyricLineNum = 0;
         }
+        this.$refs.audio.src = newVal.url; // 不能用:src, 防止随机生成的vkey导致判断为新歌曲
         this.$nextTick(() => {
           this.$refs.audio.play();
           this.getLyric();
@@ -636,6 +636,7 @@
             text-align: center;
             .text {
               margin: 0;
+              white-space: normal;
               line-height: .64rem;
               color: $color-text-l;
               font-size: $font-size-medium;
