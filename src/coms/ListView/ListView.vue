@@ -243,7 +243,8 @@
           background-position: center;
         }
         .name {
-          margin-left: .4rem;
+          margin: 0 .5rem 0 .4rem;
+          line-height: 1.5;
           color: $color-text-l;
           font-size: $font-size-medium-x;
         }

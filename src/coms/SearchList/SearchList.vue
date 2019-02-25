@@ -48,6 +48,7 @@
         height: 0;
       }
       .text {
+        @include ellipsis();
         flex: 1;
         color: $color-text-l;
         font-size: $font-size-medium-x;

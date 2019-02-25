@@ -31,7 +31,7 @@
               </div>
             </div>
             <div class="playing-lyric-wrapper">
-              <div class="playing-lyric">{{playingLyric}}</div>
+              <div class="playing-lyric" v-html="playingLyric"></div>
             </div>
           </div>
           <scroll
@@ -616,6 +616,7 @@
             overflow: hidden;
             text-align: center;
             .playing-lyric {
+              @include ellipsis();
               height: .4rem;
               line-height: .4rem;
               font-size: $font-size-medium;
@@ -770,6 +771,7 @@
         overflow: hidden;
         .name {
           @include ellipsis();
+          width: 100%;
           margin: 0;
           margin-bottom: .04rem;
           font-weight: normal;
@@ -778,6 +780,7 @@
         }
         .desc {
           @include ellipsis();
+          width: 100%;
           margin: 0;
           font-size: $font-size-medium;
           color: $color-text-d;
