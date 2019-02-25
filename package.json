@@ -10,7 +10,7 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.dev.conf.js",
     "build": "webpack --config build/webpack.prod.conf.js",
     "report": "cross-env npm_config_report=true npm run build",
-    "lint": "eslint --ext .js --ext .jsx ./",
+    "lint": "eslint --ext .js,.vue src",
     "precommit": "npm run lint"
   },
   "devDependencies": {

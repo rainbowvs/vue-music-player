@@ -22,7 +22,6 @@ const config = {
   resolve: {
     extensions: ['.js', '.vue'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
       'assets': resolve('src/assets'),
       'api': resolve('src/api'),
       'coms': resolve('src/coms'),

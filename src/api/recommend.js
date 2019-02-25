@@ -42,6 +42,11 @@ export function requestDiscList() {
   });
 }
 
+/**
+ * 请求指定歌单ID的歌曲列表数据
+ * @param {number} disstid 歌单ID
+ * @returns {Promise} promise
+ */
 export function requestSongList(disstid) {
   const url = IS_DEV ? '/api/getCdInfo' : 'http://120.79.84.141/music/api/getCdInfo';
 
