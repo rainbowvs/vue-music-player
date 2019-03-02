@@ -1,14 +1,14 @@
 <template>
   <transition name="slide">
-    <div class="add-song" v-show="showFlag">
+    <div class="add-song" v-show="visible">
       <div class="header">
         <h2 class="title">添加歌曲到列表</h2>
         <div class="close" @click="hide">
           <i class="music-icon icon-close"></i>
         </div>
       </div>
-      <div class="search-box-wrapper">
-        <search-box ref="searchBox" @query="onQueryChange" placeholder="搜索歌曲"></search-box>
+      <div class="search-bar-wrapper">
+        <search-bar ref="searchBar" placeholder="搜索歌曲" @query="onQueryChange" />
       </div>
       <div class="shortcut" v-show="!query">
         <tab :tabs="tabs" :currentIndex="currentIndex" @change="changeTab" />
@@ -18,7 +18,7 @@
               <song-list :songs="playHistory" @select="selectSong"></song-list>
             </div>
           </scroll>
-          <scroll ref="searchList" class="list-scroll" v-if="currentIndex === 1" :dataList="playHistory">
+          <scroll ref="searchList" class="list-scroll" v-if="currentIndex === 1" :dataList="searchHistory">
             <div class="list-inner">
               <search-list
                 :searches="searchHistory"
@@ -38,12 +38,6 @@
           @select="selectSearchItem"
         ></suggest>
       </div>
-      <top-tip ref="topTip">
-        <div class="tip-title">
-          <i class="music-icon icon-ok"></i>
-          <span class="text">1首歌曲已经添加到播放列表</span>
-        </div>
-      </top-tip>
     </div>
   </transition>
 </template>
@@ -51,19 +45,19 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import Scroll from 'coms/Scroll/Scroll';
-  import SearchBox from 'coms/SearchBox/SearchBox';
+  import SearchBar from 'coms/SearchBar/SearchBar';
   import Suggest from 'coms/Suggest/Suggest';
   import SongList from 'coms/SongList/SongList';
   import SearchList from 'coms/SearchList/SearchList';
   import Tab from './Tab';
-  import TopTip from 'coms/TopTip/TopTip';
+  import TopTip from 'coms/TopTip';
   import { searchMixin } from 'assets/js/mixin';
   import Song from 'assets/js/song';
   export default {
     mixins: [searchMixin],
     data() {
       return {
-        showFlag: false,
+        visible: false,
         showSinger: false,
         currentIndex: 0,
         tabs: [
@@ -75,10 +69,7 @@
     methods: {
       selectSearchItem() {
         this.saveSearchHistory(this.query);
-        this.showTopTip();
-      },
-      showTopTip() {
-        this.$refs.topTip.show();
+        TopTip('已添加到播放列表');
       },
       refreshScrollList() {
         this.$nextTick(() => {
@@ -94,7 +85,7 @@
           // 除了第一首歌
           // 因为存储localStorage经过序列化操作后实例对象被强转一般对象，因此需要重新实例化
           this.insertSong(new Song(item));
-          this.showTopTip();
+          TopTip('已添加到播放列表');
         }
       },
       changeTab(index) {
@@ -102,11 +93,11 @@
         this.refreshScrollList();
       },
       show() {
-        this.showFlag = true;
+        this.visible = true;
         this.refreshScrollList();
       },
       hide() {
-        this.showFlag = false;
+        this.visible = false;
       },
       ...mapActions([
         'insertSong'
@@ -129,13 +120,12 @@
       }
     },
     components: {
-      SearchBox,
+      SearchBar,
       Suggest,
       Tab,
       Scroll,
       SongList,
-      SearchList,
-      TopTip
+      SearchList
     }
   };
 </script>
@@ -177,7 +167,7 @@
         }
       }
     }
-    .search-box-wrapper {
+    .search-bar-wrapper {
       margin: .4rem;
     }
     .shortcut {
@@ -203,20 +193,6 @@
       &> .scroll-wrapper {
         overflow: hidden;
         height: 100%;
-      }
-    }
-    .tip-title {
-      text-align: center;
-      padding: .36rem 0;
-      font-size: 0;
-      .icon-ok {
-        font-size: $font-size-medium;
-        color: $color-theme;
-        margin-right: .08rem;
-      }
-      .text {
-        font-size: $font-size-medium;
-        color: $color-text;
       }
     }
   }

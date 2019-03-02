@@ -1,7 +1,7 @@
 <template>
   <transition name="drop">
-    <div class="top-tip" v-show="showFlag" @click.stop="hide">
-      <slot></slot>
+    <div class="top-tip" v-show="visible" @click.stop="visible = false">
+      <span v-text="message"></span>
     </div>
   </transition>
 </template>
@@ -9,27 +9,15 @@
 <script>
   export default {
     props: {
-      delay: {
-        type: Number,
-        default: 2000
+      message: {
+        type: String,
+        default: ''
       }
     },
     data() {
       return {
-        showFlag: false
+        visible: false
       };
-    },
-    methods: {
-      show() {
-        this.showFlag = true;
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-          this.hide();
-        }, this.delay);
-      },
-      hide() {
-        this.showFlag = false;
-      }
     }
   };
 </script>
@@ -37,16 +25,22 @@
 <style lang="scss" scoped>
   .top-tip {
     position: fixed;
-    left: 0;
+    left: 50%;
     top: 0;
     width: 100%;
     z-index: 500;
+    padding: .36rem 0;
     background: $color-dialog-background;
-    &.drop-enter-active, &.drop-leave-active {
-      transition: all 0.3s;
-    }
+    text-align: center;
+    backface-visibility: hidden;
+    transform: translate3d(-50%, 0, 0);
+    transition: transform .3s ease-out;
     &.drop-enter, &.drop-leave-to {
-      transform: translate3d(0, -100%, 0);
+      transform: translate3d(-50%, -100%, 0);
+    }
+    span {
+      font-size: $font-size-medium;
+      color: $color-text;
     }
   }
 </style>

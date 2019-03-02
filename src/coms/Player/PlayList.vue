@@ -1,6 +1,6 @@
 <template>
   <transition name="list-fade">
-    <div class="play-list" v-show="showFlag" @click.self="hide">
+    <div class="play-list" v-show="visible" @click.self="hide">
       <div class="list-wrapper">
         <div class="list-header">
           <h1 class="title">
@@ -56,6 +56,7 @@
   import Scroll from 'coms/Scroll/Scroll';
   import Confirm from 'coms/Confirm/Confirm';
   import AddSong from './AddSong';
+  import TopTip from 'coms/TopTip';
   import { playMode } from 'store/config';
   import { playerMixin } from 'assets/js/mixin';
   export default {
@@ -68,7 +69,7 @@
     },
     data() {
       return {
-        showFlag: false
+        visible: false
       };
     },
     methods: {
@@ -100,6 +101,10 @@
         this.$refs.scroll.scrollToElement(this.$refs.list.$el.children[index], 300);
       },
       selectItem(item, index) {
+        if (!item.url) {
+          TopTip('歌曲url错误，无法播放');
+          return;
+        }
         if (this.currentSong.id === item.id) {
           this.setPlayingState(!this.playing);
           return;
@@ -120,14 +125,14 @@
         return '';
       },
       show() {
-        this.showFlag = true;
+        this.visible = true;
         this.$nextTick(() => {
           this.$refs.scroll.refresh();
           this.scrollToCurrent(this.currentSong);
         });
       },
       hide() {
-        this.showFlag = false;
+        this.visible = false;
       },
       ...mapMutations({
         setCurrentIndex: 'SET_CURRENT_INDEX',
@@ -156,7 +161,7 @@
     },
     watch: {
       currentSong(newVal, oldVal) {
-        if (!this.showFlag || newVal.id === oldVal.id) {
+        if (!this.visible || newVal.id === oldVal.id) {
           return;
         }
         this.$nextTick(() => {
