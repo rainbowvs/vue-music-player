@@ -5,8 +5,8 @@
  */
 export function serialize(obj) {
   let url = '';
-  for (var k in obj) {
-    let value = obj[k] !== undefined ? obj[k] : '';
+  for (let k in obj) {
+    const value = obj[k] !== undefined ? obj[k] : '';
     url += '&' + k + '=' + encodeURIComponent(value);
   }
   return url ? url.substring(1) : '';
@@ -15,7 +15,7 @@ export function serialize(obj) {
 /**
  * 数值前补零
  * @param {number} num 需补零的数值
- * @param {number} [n=2] 补零后的位数
+ * @param {number} [n=2] 补零后的字符串长度
  * @returns {string} 补零后的字符串
  */
 export function pad(num, n = 2) {
@@ -39,14 +39,16 @@ export function getRandomInt(min, max) {
 }
 
 /**
- * 数组洗牌
- * @param {Array} arr 需打散的数组
- * @returns {Array} 已打散的数组
+ * 数组洗牌，Fisher-Yates shuffle
+ * @param {Array} arr 需乱序的数组
+ * @returns {Array} 已乱序的新数组
  */
 export function shuffle(arr) {
   const _arr = arr.slice();
-  for (let i = 0, len = _arr.length; i < len; i++) {
-    let j = getRandomInt(0, i);
+  const len = _arr.length;
+  const lastIndex = len - 1;
+  for (let i = 0; i < len; i++) {
+    const j = getRandomInt(i, lastIndex);
     [_arr[i], _arr[j]] = [_arr[j], _arr[i]];
   }
   return _arr;
@@ -60,12 +62,12 @@ export function shuffle(arr) {
  */
 export function debounce(func, delay) {
   let timer = null;
-  return function (...args) {
+  return function (args) {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
-      func && func.apply(this, args);
+      func && func.apply(this, [args]);
     }, delay);
   };
 }

@@ -7,10 +7,8 @@
         :key="item"
         @click="selectItem(item)"
       >
-        <span class="text">{{item}}</span>
-        <span class="icon" @click.stop="deleteOne(item)">
-          <i class="music-icon icon-delete"></i>
-        </span>
+        <span class="text" v-text="item"></span>
+        <i class="music-icon icon-delete" @click.stop="deleteOne(item)"></i>
       </li>
     </transition-group>
   </div>
@@ -53,11 +51,10 @@
         color: $color-text-l;
         font-size: $font-size-medium-x;
       }
-      .icon {
-        .icon-delete {
-          font-size: $font-size-medium;
-          color: $color-text-d;
-        }
+      i.icon-delete {
+        @include extend-click();
+        font-size: $font-size-medium;
+        color: $color-text-d;
       }
     }
   }

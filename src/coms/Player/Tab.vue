@@ -37,8 +37,9 @@
     @include flex(row);
     width: 4.8rem;
     margin: 0 auto;
-    border: 1px solid $color-highlight-background;
-    border-radius: .1rem;
+    @include border(1, $color-highlight-background, null, 5px);
+    border-radius: 5px;
+    overflow: hidden;
     .item {
       flex: 1;
       padding: .16rem;

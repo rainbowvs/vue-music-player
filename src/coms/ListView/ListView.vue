@@ -20,16 +20,16 @@
             v-for="group in dataList"
             :key="group.title"
           >
-            <h2 class="list-group-title">{{group.title}}</h2>
+            <h2 class="list-group-title" v-text="group.title"></h2>
             <ul>
               <li
                 class="list-group-item"
                 v-for="item in group.items"
-                @click="selectItem(item)"
                 :key="item.id"
+                @click="selectItem(item)"
               >
                 <img class="avatar" v-lazy="item.avatar" />
-                <span class="name">{{item.name}}</span>
+                <span class="name" v-text="item.name"></span>
               </li>
             </ul>
           </li>
@@ -43,14 +43,12 @@
     >
       <ul>
         <li
-          class="item"
           v-for="(item, index) in shortcutList"
+          v-text="item"
+          :class="['item', {'current': currentIndex === index}]"
           :data-index="index"
-          :class="{'current': currentIndex === index}"
           :key="item"
-        >
-          {{item}}
-        </li>
+        ></li>
       </ul>
     </div>
   </div>
@@ -96,14 +94,14 @@
       scroll (pos) {
         this.scrollY = pos.y;
       },
-      calculateHeight() {
+      calListHeight() {
         // 计算listHeight
         const list = this.$refs.listGroup;
         let height = 0;
         this.listHeight = [];
         this.listHeight.push(height);
         for (let i = 0, len = list.length; i < len; i++) {
-          let item = list[i];
+          const item = list[i];
           height += item.offsetHeight;
           this.listHeight.push(height); // [0, 第一个listGroup结束滚动的距离, 第二个listGroup结束滚动的距离]
         }
@@ -112,33 +110,37 @@
         // 快捷菜单touchStart
         const anchorIndex = getData(e.target, 'index');
         const firstTouch = e.touches[0];
-        this.touch.anchorIndex = +anchorIndex;
+        this.touch.anchorIndex = anchorIndex;
         this.touch.y1 = firstTouch.pageY;
-        this._scrollToElement(anchorIndex);
+        this.scrollToElement(anchorIndex);
       },
       onShortcutTouchMove(e) {
         // 快捷菜单touchMove
         const firstTouch = e.touches[0];
         this.touch.y2 = firstTouch.pageY;
         const delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0; // | 转换为二进制后再进行运算，浮点型运算时相当于向下取整
-        const anchorIndex = this.touch.anchorIndex + delta;
-        this._scrollToElement(anchorIndex);
+        const anchorIndex = parseInt(this.touch.anchorIndex) + delta; // parseInt(null) = NaN
+        this.scrollToElement(anchorIndex);
       },
-      _scrollToElement(index) {
-        // 根据快捷touch事件返回的index计算滚动位置
+      scrollToElement(index) {
+        // 根据快捷菜单touch事件返回的index计算滚动位置
         const listHeight = this.listHeight;
-        if (index === null) {
+        const shortcutLen = listHeight.length - 2; // -2 是因为listHeight第一个元素是0, 所以要减去这个元素
+        if (!index && index !== 0) {
           // 顶部和尾部UI占位
+          // null => touchstart
+          // NaN => touchmove
+          // 0 => '热'
           return;
         } else if (index < 0) {
           // 往上滑动超出顶部
           index = 0;
-        } else if (index > listHeight.length - 2) {
+        } else if (index > shortcutLen) {
           // 往下滑动超出底部
-          index = listHeight.length - 2;
+          index = shortcutLen;
         }
 
-        // 点击快捷索引无法高亮：currentIndex依赖scrollY，scrollY依赖scroll事件的pos.y，但scrollToElement不会派发scroll事件
+        // 点击快捷索引无法高亮：currentIndex依赖scrollY，scrollY依赖scroll事件的pos.y，但scrollToElement不会派发scroll事件, 所以需要手动修改scrollY的值
         this.scrollY = -listHeight[index];
         this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
       },
@@ -150,7 +152,7 @@
       dataList() {
         // 监听父组件传入的列表数据dataList
         this.$nextTick(() => {
-          this.calculateHeight();
+          this.calListHeight();
         });
       },
       scrollY(newY) {
@@ -175,11 +177,11 @@
           }
         }
 
-        //当滚动超出底部，Y > 最后一个元素
+        // 当滚动超出底部，Y > listHeight最后一个元素
         this.currentIndex = listHeight.length - 2;
       },
       diff(newVal) {
-        const fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0; // 偏移量 < 小于fixed-title，需要平移产生置顶效果
+        const fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0; // 当偏移量 < 小于fixed-title，需要平移产生置顶效果
         if (this.fixedTop === fixedTop) {
           // fixedTop = 0时，保持不变
           return;
@@ -237,10 +239,7 @@
         .avatar {
           width: 1rem;
           height: 1rem;
-          border-radius: 50%;
-          background-repeat: no-repeat;
-          background-size: contain;
-          background-position: center;
+          border-radius: 999px;
         }
         .name {
           margin: 0 .5rem 0 .4rem;

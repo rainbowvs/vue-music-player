@@ -28,7 +28,7 @@
     methods: {
       getSingerDetail(singerId) {
         if (!singerId) {
-          this.$router.push({
+          this.$router.replace({
             name: 'Singer'
           });
           return;

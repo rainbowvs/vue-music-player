@@ -1,6 +1,6 @@
 <template>
   <transition name="confirm-fade">
-    <div class="confirm" v-show="showFlag" @click.self="hide">
+    <div class="confirm" v-show="visible" @click.self="hide">
       <div class="confirm-wrapper">
         <div class="confirm-content">
           <p class="text" v-text="text"></p>
@@ -32,15 +32,15 @@
     },
     data () {
       return {
-        showFlag: false
+        visible: false
       };
     },
     methods: {
       show() {
-        this.showFlag = true;
+        this.visible = true;
       },
       hide() {
-        this.showFlag = false;
+        this.visible = false;
       },
       confirm() {
         this.hide();
@@ -92,14 +92,14 @@
           align-items: center;
           text-align: center;
           font-size: $font-size-medium-x;
-          border-top: 1px solid $color-background-d;
+          @include border(1, $color-background-d, top);
           .operate-btn {
             flex: 1;
             line-height: .44rem;
             padding: .2rem 0;
             color: $color-text-d;
             &.left {
-              border-right: 1px solid $color-background-d;
+              @include border(1, $color-background-d, right);
             }
           }
         }

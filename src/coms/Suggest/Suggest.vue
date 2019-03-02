@@ -21,7 +21,7 @@
       <loading v-show="hasMore" />
     </ul>
     <div v-show="!hasMore && !result.length" class="no-result-wrapper">
-      <no-result></no-result>
+      <no-result />
     </div>
   </scroll>
 </template>
@@ -83,17 +83,19 @@
         }
       },
       searchMore () {
-        if (!this.hasMore) {
+        if (!this.hasMore || this.isLoading) {
           return;
         }
-        this.page++;
-        requestSearch(this.query, this.page, this.showSinger, perpage).then(res => {
+        this.isLoading = true;
+        requestSearch(this.query, this.page + 1, this.showSinger, perpage).then(res => {
           if (res.code === REQ_STATE.OK) {
+            this.page++;
             this.genResult(res.data).then(result => {
               this.result = this.result.concat(result);
             });
             this.checkMore(res.data);
           }
+          this.isLoading = false;
         });
       },
       formatKey({id, singerid}) {
@@ -135,6 +137,7 @@
       getSearch() {
         this.page = 1;
         this.hasMore = true;
+        this.isLoading = true;
         this.$refs.scroll.scrollTo(0, 0);
         requestSearch(this.query, this.page, this.showSinger, perpage).then(res => {
           if (res.code === REQ_STATE.OK) {
@@ -143,6 +146,7 @@
             });
             this.checkMore(res.data);
           }
+          this.isLoading = false;
         });
       },
       ...mapMutations({
@@ -182,10 +186,10 @@
         color: $color-text-ll;
       }
       .text {
+        @include ellipsis();
         font-size: $font-size-medium-x;
         color: $color-text-d;
         flex: 1;
-        @include ellipsis();
         margin: 0;
       }
     }

@@ -5,18 +5,17 @@
         :title="title"
         :bg-image="bgImage"
         :songs="songs"
-      >
-      </music-list>
+      ></music-list>
     </div>
   </transition>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   import MusicList from 'coms/MusicList/MusicList';
   import { requestSongList } from 'api/recommend';
   import { createSong, processSongsUrl, isValidMusic } from 'assets/js/song';
   import { REQ_STATE } from 'api/config';
-  import { mapGetters } from 'vuex';
   export default {
     data() {
       return {
@@ -29,7 +28,7 @@
     methods: {
       getSongList() {
         if (!this.disc.dissid) {
-          this.$router.push('/recommend');
+          this.$router.replace('/recommend');
           return;
         }
         requestSongList(this.disc.dissid).then(res => {

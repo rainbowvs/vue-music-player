@@ -32,8 +32,8 @@ export const selectPlay = function({commit, state}, {list, index}) {
   if (state.mode === playMode.random) {
     // 随机播放模式
     const randomList = shuffle(list);
-    commit(types.SET_PLAYLIST, randomList);
     newIndex = findIndex(randomList, list[index]);
+    commit(types.SET_PLAYLIST, randomList);
   } else {
     commit(types.SET_PLAYLIST, list);
   }
@@ -68,7 +68,7 @@ export const insertSong = function({commit, state}, song) {
 
   // 修改playList
   const fpIndex = findIndex(playList, song); // 原有歌曲位置
-  currentIndex++;
+  currentIndex++; // 在当前播放歌曲的下一位插入
   playList.splice(currentIndex, 0, song); // 插入歌曲
   if (fpIndex > -1) {
     // 当前播放列表已存在插入歌曲时，删除旧歌曲
@@ -116,6 +116,7 @@ export const deleteSong = function({commit, state}, song) {
   sequenceList.splice(sIndex, 1);
 
   if (currentIndex > pIndex || currentIndex === playList.length) {
+    // 删除位置在当前正在播放歌曲位置前面 或 删除的是最后一首歌(currentIndex重置为-1)
     currentIndex--;
   }
   commit(types.SET_PLAYLIST, playList);

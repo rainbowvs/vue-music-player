@@ -2,7 +2,7 @@
   <div class="m-header">
     <div class="logo"></div>
     <h1 class="title">Chicken Music</h1>
-    <router-link to="/user" tag="div" class="mine">
+    <router-link to="/user" class="mine">
       <i class="music-icon icon-mine"></i>
     </router-link>
   </div>

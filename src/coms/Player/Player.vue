@@ -27,7 +27,7 @@
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
-                <img v-lazy="currentSong.image" :key="currentSong.image" class="image" />
+                <img class="image" v-lazy="currentSong.image" :key="currentSong.image" />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -50,18 +50,18 @@
                 ></p>
               </div>
               <div class="pure-music" v-show="isPureMusic">
-                <p>{{pureMusicLyric}}</p>
+                <p v-text="pureMusicLyric"></p>
               </div>
             </div>
           </scroll>
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
-            <span class="dot" :class="{active: currentShow === 'cd'}"></span>
-            <span class="dot" :class="{active: currentShow === 'lyric'}"></span>
+            <span :class="['dot', {active: currentShow === 'cd'}]"></span>
+            <span :class="['dot', {active: currentShow === 'lyric'}]"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time time-l">{{getCurrentTime}}</span>
+            <span class="time time-l" v-text="getCurrentTime"></span>
             <div class="progress-bar-wrapper">
               <progress-bar
                 ref="progressBar"
@@ -70,7 +70,7 @@
                 @percentChanging="onProgressChanging"
               ></progress-bar>
             </div>
-            <span class="time time-r">{{format(currentSong.duration)}}</span>
+            <span class="time time-r" v-text="format(currentSong.duration)"></span>
           </div>
           <div class="operators">
             <i @click="changeMode" :class="`music-icon ${modeIcon}`"></i>
@@ -84,22 +84,16 @@
     </transition>
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
-        <div class="progress" :style="`width: ${percent*100}%`"></div>
-        <div class="icon">
-          <div ref="miniWrapper" :class="`imgWrapper ${cdCls}`">
-            <img v-lazy="currentSong.image" :key="currentSong.image" alt="miniCDPost">
-          </div>
+        <div class="progress" :style="`width: ${percent * 100}%`"></div>
+        <div class="poster">
+          <img :class="cdCls" v-lazy="currentSong.image" alt="miniCDPoster" :key="currentSong.image">
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control">
-          <i @click.stop="togglePlaying" :class="`music-icon ${miniPlayIcon}`"></i>
-        </div>
-        <div class="control">
-          <i @click.stop="showPlayList" class="music-icon icon-playlist"></i>
-        </div>
+        <i @click.stop="togglePlaying" :class="`control music-icon ${miniPlayIcon}`"></i>
+        <i @click.stop="showPlayList" class="control music-icon icon-playlist"></i>
       </div>
     </transition>
     <audio
@@ -114,12 +108,13 @@
 </template>
 
 <script>
-  import LyricParser from 'lyric-parser';
   import { mapGetters, mapMutations, mapActions } from 'vuex';
+  import LyricParser from 'lyric-parser';
   import animations from 'create-keyframe-animation';
   import ProgressBar from './ProgressBar';
   import PlayList from './PlayList';
   import Scroll from 'coms/Scroll/Scroll';
+  import TopTip from 'coms/TopTip';
   import { prefix } from 'assets/js/dom';
   import { pad } from 'assets/js/utils';
   import { playMode } from 'store/config';
@@ -128,24 +123,24 @@
   const { fontSize } = docEl.style;
   const transform = prefix('transform');
   const transitionDuration = prefix('transitionDuration');
-  const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g;
+  const timeExp = /\[(\d{2}):(\d{2}):(\d{2})\]/g;
   export default {
     mixins: [playerMixin],
     created() {
-      this.touch = {};
+      this.touch = {}; // 保存touchstart手指数据
     },
     data() {
       return {
-        songReady: false,
-        dragProgress: false,
-        currentTime: 0,
-        progressTime: 0,
-        currentLyric: null,
-        currentLyricLineNum: 0,
-        currentShow: 'cd',
-        playingLyric: '',
-        isPureMusic: false,
-        pureMusicLyric: ''
+        songReady: false, // 歌曲是否可以播放
+        dragProgress: false, // 拖动进度条
+        currentTime: 0, // 正在播放歌曲的进度对应时间
+        progressTime: 0, // 拖动时进度条对应时间
+        currentLyric: null, // 歌词实例
+        currentLyricLineNum: 0, // 播放进度对应歌词行数
+        currentShow: 'cd', // 页标, 对应cd页('cd')或歌词页('lyric')
+        playingLyric: '', // cd页歌词
+        isPureMusic: false, // 纯音乐标记
+        pureMusicLyric: '' // 纯音乐歌词模板
       };
     },
     methods: {
@@ -157,49 +152,61 @@
         this.$refs.playList.show();
       },
       middleTouchStart(e) {
-        this.touch.initiated = true;
-        this.touch.moved = false; // touchMove标志
-        const touch = e.touches[0];
-        this.touch.startX = touch.pageX;
-        this.touch.startY = touch.pageY;
+        // 在touchstart事件创建一个普通对象记录手指初始位置信息
+        const touchFinger = e.touches[0];
+        const touch = this.touch;
+        touch.initiated = true;
+        touch.moved = false; // touchMove标志
+        touch.startX = touchFinger.pageX;
+        touch.startY = touchFinger.pageY;
       },
       middleTouchMove(e) {
-        if (!this.touch.initiated) {
+        // 在touchmove事件根据初始位置计算出手指偏移量, 并用translate跟随手指
+        const touch = this.touch;
+        if (!touch.initiated) {
           return;
         }
-        const touch = e.touches[0];
-        const deltaX = touch.pageX - this.touch.startX;
-        const deltaY = touch.pageY - this.touch.startY;
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        const moveTouch = e.touches[0];
+        const deltaX = moveTouch.pageX - touch.startX;
+        const deltaY = moveTouch.pageY - touch.startY;
+        const isCDTab = this.currentShow === 'cd';
+        if (Math.abs(deltaY) > Math.abs(deltaX) && !isCDTab) {
           // Scroll组件纵向滚动
+          touch.initiated = false;
           return;
         }
-        if (!this.touch.moved) {
+        if (!touch.moved) {
           // 触发touchMove
-          this.touch.moved = true;
+          touch.moved = true;
         }
-        // 歌词当前平移距离
-        const currentTranslateX = this.currentShow === 'cd' ? 0 : -window.innerWidth;
+        // 歌词页左边相对于屏幕右边的平移距离
+        const currentTranslateX = isCDTab ? 0 : -window.innerWidth;
         const translateX = Math.min(
           0,
           Math.max(-window.innerWidth, currentTranslateX + deltaX)
-        ); // 平移限制区间[-window.innerWidth, 0]
-        this.touch.percent = Math.abs(translateX / window.innerWidth);
-        this.$refs.lyricList.$el.style[transitionDuration] = `0ms`;
-        this.$refs.lyricList.$el.style[transform] = `translate3d(${translateX}px, 0, 0)`;
-        this.$refs.middleL.style[transitionDuration] = `0ms`;
-        this.$refs.middleL.style.opacity = 1 - this.touch.percent;
+        ); // 歌词页平移限制区间[-window.innerWidth, 0]
+        const lyricListStyle = this.$refs.lyricList.$el.style;
+        const middleLStyle = this.$refs.middleL.style;
+        touch.percent = Math.abs(translateX / window.innerWidth); // 手指横向偏移量(百分比)相对屏幕宽度
+        lyricListStyle[transitionDuration] = `0ms`;
+        lyricListStyle[transform] = `translate3d(${translateX}px, 0, 0)`;
+        middleLStyle[transitionDuration] = `0ms`;
+        middleLStyle.opacity = 1 - touch.percent;
       },
       middleTouchEnd() {
-        if (!this.touch.moved) {
+        // 在touchend事件根据手指偏移量, 判断是否达到切换条件, 最后translate平移
+        const { moved, percent } = this.touch;
+        if (!moved) {
           // 如果没有触发touchMove，不执行任何操作，防止跳过touchMove直接执行touchEnd，产生bug
           return;
         }
         let translateX = 0;
         let opacity = 0;
         const time = 300;
+        const lyricListStyle = this.$refs.lyricList.$el.style;
+        const middleLStyle = this.$refs.middleL.style;
         if (this.currentShow === 'cd') {
-          if (this.touch.percent > 0.1) {
+          if (percent > 0.1) {
             translateX = -window.innerWidth;
             opacity = 0;
             this.currentShow = 'lyric';
@@ -208,7 +215,7 @@
             opacity = 1;
           }
         } else {
-          if (this.touch.percent < 0.9) {
+          if (percent < 0.9) {
             translateX = 0;
             opacity = 1;
             this.currentShow = 'cd';
@@ -217,10 +224,10 @@
             opacity = 0;
           }
         }
-        this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`;
-        this.$refs.lyricList.$el.style[transform] = `translate3d(${translateX}px, 0, 0)`;
-        this.$refs.middleL.style[transitionDuration] = `${time}ms`;
-        this.$refs.middleL.style.opacity = opacity;
+        lyricListStyle[transitionDuration] = `${time}ms`;
+        lyricListStyle[transform] = `translate3d(${translateX}px, 0, 0)`;
+        middleLStyle[transitionDuration] = `${time}ms`;
+        middleLStyle.opacity = opacity;
         this.touch.initiated = false;
       },
       handleLyric({lineNum, txt}) {
@@ -228,12 +235,13 @@
           return;
         }
         const midLine = 6;
+        const { lyricLine, lyricList } = this.$refs;
         this.currentLyricLineNum = lineNum;
         if (lineNum > midLine) {
-          const lineEl = this.$refs.lyricLine[lineNum - midLine];
-          this.$refs.lyricList.scrollToElement(lineEl, 1000);
+          const lineEl = lyricLine[lineNum - midLine];
+          lyricList.scrollToElement(lineEl, 1000);
         } else {
-          this.$refs.lyricList.scrollTo(0, 0, 1000);
+          lyricList.scrollTo(0, 0, 1000);
         }
         this.playingLyric = txt;
       },
@@ -246,7 +254,7 @@
           this.currentLyric = new LyricParser(lyric, this.handleLyric);
           this.isPureMusic = !this.currentLyric.lines.length;
           if (this.isPureMusic) {
-            this.pureMusicLyric = this.currentLyric.lrc.replace(timeExp, '').trim();
+            this.pureMusicLyric = this.currentLyric.lrc.replace(timeExp, '').trim(); // 纯音乐去掉时间
             this.playingLyric = this.pureMusicLyric;
           } else {
             this.pureMusicLyric = '';
@@ -363,18 +371,19 @@
         const bottom = parseFloat(fontSize) * 0.6; // miniCD圆心与screen下边距离
         const CDTop = parseFloat(fontSize) * 1.6; // CD圆心与screen下边距离
         const CDWidth = window.innerWidth * 0.8; // CD宽度
-        const scale = miniCDWidth / CDWidth; // CD => miniCD 缩放比率
+        const scale = miniCDWidth / CDWidth; // CD => miniCD 缩小比率
         const x = -(window.innerWidth / 2 - left); // miniCD圆心和CD圆心的x坐标距离差
         const y = window.innerHeight - CDTop - CDWidth / 2 - bottom; // miniCD圆心和CD圆心的y坐标距离差
         return {
           x, // CD从miniCD坐标出发，水平位移距离
           y, // CD从miniCD坐标出发，垂直位移距离
-          scale // CD从miniCD坐标出发，放大倍数
+          scale // CD => miniCD缩小倍数
         };
       },
       enter(el, done) {
-        const {x, y, scale} = this.getPosAndScale();
+        const { x, y, scale } = this.getPosAndScale(); // 计算平移位置和缩小倍数
 
+        // CSS3动画可以控制过程, 过渡动画只能控制结果
         let animation = {
           0: {
             transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
@@ -387,6 +396,7 @@
           }
         };
 
+        // 注册
         animations.registerAnimation({
           name: 'move',
           animation,
@@ -396,9 +406,11 @@
           }
         });
 
+        // 运行
         animations.runAnimation(this.$refs.cdWrapper, 'move', done);
       },
       afterEnter() {
+        // 销毁
         animations.unregisterAnimation('move');
         this.$refs.cdWrapper.style.animation = '';
       },
@@ -460,8 +472,13 @@
     },
     watch: {
       currentSong(newVal, oldVal) {
-        if (!newVal.id || !newVal.url || newVal.id === oldVal.id) {
+        if (!newVal.id || newVal.id === oldVal.id) {
           return;
+        }
+        if (!newVal.url) {
+          TopTip(`${newVal.name}歌曲url错误，自动切换下一首`);
+          this.songReady = true;
+          this.next();
         }
         this.currentTime = 0;
         this.songReady = false; // currentIndex切歌必须重新设为false，防止抛异常
@@ -748,20 +765,16 @@
         height: 1px;
         background: $color-theme;
       }
-      .icon {
+      .poster {
         flex: 0 0 .8rem;
         width: .8rem;
         height: .8rem;
         padding: 0 .2rem 0 .4rem;
-        .imgWrapper {
+        img {
           @include play-rotate();
           height: 100%;
           width: 100%;
-          img {
-            height: 100%;
-            width: 100%;
-            border-radius: 50%;
-          }
+          border-radius: 50%;
         }
       }
       .text {
@@ -788,16 +801,10 @@
       }
       .control {
         flex: 0 0 .6rem;
-        padding: 0 .2rem;
-        .icon-play-mini, .icon-pause-mini, .icon-playlist {
+        padding: .2rem;
+        &.icon-play-mini, &.icon-pause-mini, &.icon-playlist {
           font-size: .6rem;
           color: $color-theme-d;
-        }
-        .icon-mini {
-          font-size: .64rem;
-          position: absolute;
-          left: 0;
-          top: 0;
         }
       }
     }

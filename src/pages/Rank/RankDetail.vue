@@ -29,7 +29,7 @@
     methods: {
       getMusicList() {
         if (!this.rank.id) {
-          this.$router.push('/rank');
+          this.$router.replace('/rank');
         }
         requestMusicList(this.rank.id).then(res => {
           if (res.code === REQ_STATE.OK) {

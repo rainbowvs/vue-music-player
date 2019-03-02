@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>vue-music-player</title>
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +14,7 @@
       body {
         margin: 0;
         user-select: none;
-        line-height: 1;
+        line-height: 1.2;
         background-color: #222; /* init */
       }
       ul, ol {
@@ -22,6 +24,8 @@
       }
       input {
         border: none;
+        line-height: 1.2;
+        margin: 0;
       }
       button {
         padding: 0;
@@ -37,6 +41,7 @@
       }
       a, button {
         -webkit-tap-highlight-color: transparent;
+        text-decoration: none;
       }
     </style>
     <script>

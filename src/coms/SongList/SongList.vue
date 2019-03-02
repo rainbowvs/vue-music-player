@@ -14,8 +14,8 @@
           ></span>
         </div>
         <div class="content">
-          <h2 class="name">{{song.name}}</h2>
-          <p class="desc">{{getDesc(song)}}</p>
+          <h2 class="name" v-text="song.name"></h2>
+          <p class="desc" v-text="getDesc(song)"></p>
         </div>
       </li>
     </ul>

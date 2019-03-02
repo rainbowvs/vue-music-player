@@ -1,18 +1,18 @@
 <template>
-  <ul class="nav">
-    <router-link tag="li" class="nav-item" to="/recommend">
+  <div class="nav">
+    <router-link class="nav-item" to="/recommend">
       <span>推荐</span>
     </router-link>
-    <router-link tag="li" class="nav-item" to="/singer">
+    <router-link class="nav-item" to="/singer">
       <span>歌手</span>
     </router-link>
-    <router-link tag="li" class="nav-item" to="/rank">
+    <router-link class="nav-item" to="/rank">
       <span>排行</span>
     </router-link>
-    <router-link tag="li" class="nav-item" to="/search">
+    <router-link class="nav-item" to="/search">
       <span>搜索</span>
     </router-link>
-  </ul>
+  </div>
 </template>
 
 <script>

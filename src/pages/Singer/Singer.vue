@@ -49,17 +49,19 @@
             id: v.Fsinger_mid,
             name: v.Fsinger_name
           });
-          const key = v.Findex;
+          const key = v.Findex; // 首字母
           if (i < HOT_SINGER_LEN) {
+            // 取前 HOT_SINGER_LEN 个放入热门类
             singerMap.hot.items.push(item);
           }
           if (!singerMap[key]) {
+            // 如果不存在首字母为 key 的类别, 则创建该类
             singerMap[key] = {
               title: key,
               items: []
             };
           }
-          singerMap[key].items.push(item);
+          singerMap[key].items.push(item); // 加入该类
         });
         // 分类
         const hot = [];
@@ -67,14 +69,15 @@
         for (let key in singerMap) {
           const val = singerMap[key];
           if (val.title.match(/[a-zA-Z]/)) {
-            // 字母
+            // 首字母类
             letter.push(val);
             continue;
           } else if (val.title === HOT_NAME) {
+            // 热门类
             hot.push(val);
           }
         }
-        // 排序
+        // 排升序
         letter.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
         return hot.concat(letter);
       },

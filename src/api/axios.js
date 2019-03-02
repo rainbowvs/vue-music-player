@@ -1,4 +1,5 @@
 import axios from 'axios';
+import TopTip from 'coms/TopTip';
 
 // axios实例配置
 const axiosInstance = axios.create({
@@ -27,7 +28,7 @@ axiosInstance.interceptors.response.use(response => {
   if (error && error.response) {
     switch (error.response.status) {
       case 404:
-        // '请求地址为空'
+        TopTip('请求地址为空');
         break;
     }
     return Promise.reject(error);
@@ -37,10 +38,8 @@ axiosInstance.interceptors.response.use(response => {
     config.__retryCount = config.__retryCount || 0; // 设置变量以跟踪重试次数
     if (config.__retryCount >= config.retry) {
       // 判断请求是否已经达到重试上限
-      // '请检查网络后重试'
+      TopTip('请检查网络后重试');
       return Promise.reject(error); // Reject with the error
-    } else {
-      // 未达上限
     }
     config.__retryCount += 1; // 叠加重试次数
     let backoff = new Promise(resolve => {

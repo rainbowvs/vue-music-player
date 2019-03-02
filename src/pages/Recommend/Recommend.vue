@@ -5,11 +5,11 @@
         <div class="carousel-box">
           <div class="carousel">
             <Carousel v-if="sliders.length" :dataList="sliders">
-              <div v-for="item in sliders" :key="item.id">
+              <li v-for="item in sliders" :key="item.id">
                 <a :href="item.linkUrl">
                   <img :src="item.picUrl">
                 </a>
-              </div>
+              </li>
             </Carousel>
           </div>
         </div>
@@ -116,6 +116,7 @@
       padding-top: 40%;
       height: 0;
       overflow: hidden;
+      background: $color-highlight-background;
       .carousel {
         position: absolute;
         left: 0;
@@ -142,9 +143,6 @@
           flex-shrink: 0;
           width: 1.2rem;
           height: 1.2rem;
-          background-repeat: no-repeat;
-          background-size: contain;
-          background-position: center;
           margin-right: .4rem;
         }
         .text {

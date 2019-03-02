@@ -7,7 +7,7 @@ import axios from './axios';
  * @param {Object} songs 歌曲列表
  * @returns {Promise} 歌曲信息
  */
-export function getSongsUrl(songs) {
+export function requestSongsUrl(songs) {
   const url = IS_DEV ? '/api/getPurlUrl' : 'http://120.79.84.141/music/api/getPurlUrl';
   const mids = [];
   const types = [];
@@ -49,13 +49,10 @@ export function getSongsUrl(songs) {
     if (res.data.code === REQ_STATE.OK) {
       const urlMid = res.data.req_0;
       if (urlMid && urlMid.code === REQ_STATE.OK) {
-        const info = urlMid.data.midurlinfo[0];
-        if (info && info.purl) {
-          return urlMid.data.midurlinfo;
-        }
+        return urlMid.data.midurlinfo;
       }
     }
-    return false;
+    return Promise.reject('server data error');
   });
 }
 
@@ -64,7 +61,7 @@ export function getSongsUrl(songs) {
  * @param {string} mid 歌曲mid
  * @returns {Promise} 歌词信息
  */
-export function getLyric(mid) {
+export function requestLyric(mid) {
   const url = IS_DEV ? '/api/getLyric' : 'http://120.79.84.141/music/api/getLyric';
 
   const data = Object.assign({}, commonParams, {

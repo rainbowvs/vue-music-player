@@ -31,24 +31,25 @@
 }
 
 /* 扩展点击区域 */
-@mixin extend-click() {
+@mixin extend-click($hor: -.2rem, $ver: -.2rem) {
   position: relative;
-  &::before {
+  &::after {
     content: '';
     position: absolute;
-    top: -.2rem;
-    left: -.2rem;
-    right: -.2rem;
-    bottom: -.2rem;
+    top: $ver;
+    left: $hor;
+    right: $hor;
+    bottom: $ver;
   }
 }
 
-@mixin border($width, $color, $directions: top right bottom left, $radius: 0, $style:solid) {
-  $scale: 1 / 3;
+@mixin border($width, $color, $directions, $radius: 0, $style: solid) {
+  $directions: top right bottom left !default;
   position: relative;
   &::before {
+    pointer-events: none;
     box-sizing: border-box;
-    z-index: -1;
+    z-index: 1;
     content:'';
     display: block;
     position: absolute;
@@ -66,12 +67,12 @@
     [data-dpr="2"] & {
       width: 200%;
       height: 200%;
-      transform: scale(.5, .5);
+      transform: scale(($width / 2));
     }
     [data-dpr="3"] & {
       width: 300%;
       height: 300%;
-      transform: scale($scale, $scale);
+      transform: scale(($width / 3));
     }
   }
 }

@@ -95,9 +95,6 @@
       .poster {
         width: 2rem;
         height: 2rem;
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center;
       }
       .song-list {
         @include flex(column, center, stretch);

@@ -4,14 +4,13 @@
       <i class="music-icon icon-back"></i>
     </div>
     <h1 class="title" v-text="title"></h1>
-    <div class="bg-image" :style="bgStyle" ref="bgImage">
+    <div ref="bgImage" class="bg-image" :style="bgStyle">
       <div
         class="play-wrapper"
         ref="playBtn"
-        v-show="songs.length > 0"
-        @click="random"
+        v-show="songs.length"
       >
-        <div class="play">
+        <div class="play" @click="random">
           <i class="music-icon icon-play"></i>
           <span class="text">随机播放全部</span>
         </div>
@@ -48,7 +47,7 @@
   import { playListMixin } from 'assets/js/mixin';
   const docEl = document.documentElement;
   const { fontSize } = docEl.style;
-  const RESERVED_HEIGHT = parseFloat(fontSize) * 0.8; // rem精确浮点数
+  const RESERVED_HEIGHT = parseFloat(fontSize) * 0.8; // header保留高度 rem精确浮点数
   const transform = prefix('transform');
   const backdrop = prefix('backdrop-filter');
   export default {
@@ -97,7 +96,7 @@
           list: this.songs
         });
       },
-      selectItem (item, index) {
+      selectItem(item, index) {
         this.selectPlay({
           list: this.songs,
           index
@@ -116,6 +115,7 @@
     },
     watch: {
       scrollY(newY) {
+        // 根据滚动距离, layer平移, bgImage放大, filter模糊
         const translateY = Math.max(this.minTransalteY, newY);
         let percent = Math.abs(newY / this.imageHeight);
         let zIndex = 0; // 歌手图片层级

@@ -24,7 +24,7 @@
         </scroll>
       </div>
       <div v-show="noResult" class="no-result-wrapper">
-        <no-result :title="noResultTitle"></no-result>
+        <no-result :title="noResultTitle" />
       </div>
     </div>
   </transition>
@@ -67,10 +67,8 @@
         if (!list.length) {
           return;
         }
-        list = list.map(v => {
-          return new Song(v);
-        });
-        this.randomPlay({list});
+        list = list.map(v => new Song(v));
+        this.randomPlay({ list });
       },
       selectSong(item) {
         // 因为存储localStorage经过序列化操作后实例对象被强转一般对象，因此需要重新实例化

@@ -1,4 +1,4 @@
-import { getSongsUrl, getLyric } from 'api/song';
+import { requestSongsUrl, requestLyric } from 'api/song';
 import { REQ_STATE } from 'api/config';
 import { Base64 } from 'js-base64';
 
@@ -20,7 +20,7 @@ export default class Song {
       return Promise.resolve(this.lyric);
     }
     return new Promise((resolve, reject) => {
-      getLyric(this.mid).then(res => {
+      requestLyric(this.mid).then(res => {
         if (res.retcode === REQ_STATE.OK) {
           this.lyric = Base64.decode(res.lyric);
           resolve(this.lyric);
@@ -76,8 +76,12 @@ export function processSongsUrl(songs) {
   if (!songs.length) {
     return Promise.resolve(songs);
   }
-  return getSongsUrl(songs).then(midUrlInfo => {
+  return requestSongsUrl(songs).then(midUrlInfo => {
     midUrlInfo.forEach((v, i) => {
+      if (!v.purl) {
+        // 不能获取url
+        return;
+      }
       songs[i].url = v.purl.indexOf('http') === -1
         ? `http://dl.stream.qqmusic.qq.com/${v.purl}`
         : v.purl;

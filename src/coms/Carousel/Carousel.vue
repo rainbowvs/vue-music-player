@@ -1,8 +1,8 @@
 <template>
   <div class="carousel-wrapper" ref="carousel">
-    <div class="carousel-group" ref="carouselGroup">
+    <ul class="carousel-group" ref="carouselGroup">
       <slot></slot>
-    </div>
+    </ul>
     <ul class="dots">
       <li
         class="dot"
@@ -11,6 +11,7 @@
         :key="item.id"
       ></li>
     </ul>
+    <div class="init" v-if="!initial"></div>
   </div>
 </template>
 
@@ -47,7 +48,8 @@
     data() {
       return {
         dots: [],
-        currentPageIndex: 0
+        currentPageIndex: 0,
+        initial: false
       };
     },
     mounted() {
@@ -55,27 +57,30 @@
         this.setCarouselWidth();
         this.initDots();
         this.initCarousel();
+        this.initial = true;
         if (this.autoPlay) {
           this.play();
         }
-      }, 30);
+      }, 100);
       window.addEventListener('resize', this.resize);
     },
     activated() {
+      if (!this.carousel) {
+        return;
+      }
+      this.carousel.enable();
       if (this.autoPlay) {
         this.play();
       }
       window.addEventListener('resize', this.resize);
     },
     deactivated() {
+      this.carousel.disable();
       clearTimeout(this.timer);
       window.removeEventListener('resize', this.resize);
     },
     methods: {
       resize() {
-        if (!this.carousel) {
-          return;
-        }
         this.setCarouselWidth(true);
         this.carousel.refresh();
       },
@@ -84,7 +89,7 @@
         this.children = this.$refs.carouselGroup.children;
         let carouselGroupWidth = 0;
         let itemWidth = this.$refs.carousel.clientWidth;
-        for (let i = 0; i < this.children.length; i++) {
+        for (let i = 0,len = this.children.length; i < len; i++) {
           let child = this.children[i];
           addClass(child, 'carousel-item');
           child.style.width = itemWidth + 'px';
@@ -100,8 +105,6 @@
           scrollX: true,
           scrollY: false,
           momentum: false, // 惯性滚动
-          stopPropagation: false,
-          click: true,
           snap: {
             loop: this.loop,
             threshold: this.threshold, // 切换触发的阈值10%
@@ -144,6 +147,7 @@
 
 <style lang="scss" scoped>
   .carousel-wrapper {
+    position: relative;
     .carousel-group {
       position: relative;
       overflow: hidden;
@@ -181,6 +185,15 @@
           background: $color-text-ll;
         }
       }
+    }
+    .init {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      background: $color-highlight-background;
     }
   }
 </style>

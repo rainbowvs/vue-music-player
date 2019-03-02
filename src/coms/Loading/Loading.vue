@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <div class="box"></div>
+    <div class="spinner"></div>
     <p v-text="title"></p>
   </div>
 </template>
@@ -21,7 +21,7 @@
     @include flex(column, space-around);
     width: 100%;
     height: 1.5rem;
-    .box {
+    .spinner {
       animation: animate 1s linear infinite;
       background-color: $color-theme;
       width: .5rem;
