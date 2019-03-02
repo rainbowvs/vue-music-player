@@ -1,7 +1,7 @@
 <template>
   <div class="search">
-    <div class="search-box-wrapper">
-      <search-box ref="searchBox" @query="onQueryChange"></search-box>
+    <div class="search-bar-wrapper">
+      <search-bar ref="searchBar" @query="onQueryChange" />
     </div>
     <div ref="shortcut" class="shortcut-wrapper" v-show="!query">
       <scroll ref="scroll" class="shortcut" :dataList="shortcut">
@@ -56,7 +56,7 @@
 <script>
   import { mapActions, mapGetters } from 'vuex';
   import Scroll from 'coms/Scroll/Scroll';
-  import SearchBox from 'coms/SearchBox/SearchBox';
+  import SearchBar from 'coms/SearchBar/SearchBar';
   import Suggest from 'coms/Suggest/Suggest';
   import SearchList from 'coms/SearchList/SearchList';
   import Confirm from 'coms/Confirm/Confirm';
@@ -110,6 +110,7 @@
     },
     computed: {
       shortcut() {
+        // 便于scroll组件重新计算高度
         return this.hotKey.concat(this.searchHistory);
       },
       ...mapGetters([
@@ -118,7 +119,7 @@
     },
     components: {
       Scroll,
-      SearchBox,
+      SearchBar,
       Suggest,
       SearchList,
       Confirm
@@ -132,7 +133,7 @@
     width: 100%;
     top: 1.76rem;
     bottom: 0;
-    .search-box-wrapper {
+    .search-bar-wrapper {
       margin: .4rem;
     }
     .shortcut-wrapper {

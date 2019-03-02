@@ -100,13 +100,13 @@ export const searchMixin = {
   },
   methods: {
     blurInput() {
-      this.$refs.searchBox.blur();
+      this.$refs.searchBar.blur();
     },
     onQueryChange(query) {
       this.query = query;
     },
     addQuery(query) {
-      this.$refs.searchBox.setQuery(query);
+      this.$refs.searchBar.setQuery(query);
     },
     ...mapActions([
       'saveSearchHistory',
