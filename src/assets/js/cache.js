@@ -10,7 +10,7 @@ const FAVORITE_KEY = '__favorite__'; // 收藏历史key
 const FAVORITE_MAX_LENGTH = 200; // 收藏历史列表最大长度
 
 /**
- * 数组头部插入元素，元素超出maxLen个时删除第一个元素
+ * 数组头部插入元素，元素超出maxLen个时删除最后一个元素
  * @param {Array} arr 数组
  * @param {string} val 插入元素
  * @param {Function} compare 比较函数回调
